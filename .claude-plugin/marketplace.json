@@ -1,0 +1,9 @@
+{
+  "name": "999online",
+  "owner": { "name": "999online" },
+  "metadata": {
+    "description": "Claude Code plugin marketplace for 999online developers.",
+    "version": "0.1.0"
+  },
+  "plugins": []
+}
