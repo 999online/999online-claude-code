@@ -73,6 +73,19 @@ Skills (also standalone): `mobile-discover` (intake + escalation gate), `mobile-
 
 Needs: Node 22+, npm, network; Expo Go app on a phone for local run; free Expo account for EAS deploy; Cloudflare account for PWA/backend deploy. Bundles context7 MCP for current library docs; falls back to WebSearch. Pure desk web app → use web-scaffold instead (decide stage redirects).
 
+### idea-incubation-review
+
+Initial research + viability verdict for a raw idea against 999's incubation criteria. Fans out three analysts in parallel (buildability, market/adoption, business), then scores against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09 commercial / page-10 internal scorecard). Enforces the software-first hard gate (fail → auto-RETHINK). Answers *buildable per the operating model?* and *viable per the rulebook?*, classifies Commercial vs Internal track, lists gaps to close + missing presenter deliverables. Writes dossiers + `SUMMARY.md` to `docs/incubation/<slug>/`.
+
+```
+/plugin install idea-incubation-review@999online
+/incubation-review [one-line idea]
+```
+
+Agents: `incubation-architecture-analyst` (opus), `incubation-market-analyst` (sonnet), `incubation-business-analyst` (opus). Skills (also standalone): `incubation-research` (classify track + fan out analysts), `incubation-scorecard` (score + verdict).
+
+Needs: network (WebSearch/WebFetch). Works with zero setup — bundles distilled 999 criteria. Optional: connect a Confluence-reader MCP (tools `confluence_*`) to freshen criteria from the live PIH space and flag snapshot drift — see the plugin's `references/confluence-mcp-setup.md`.
+
 ## Layout
 
 ```
