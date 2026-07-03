@@ -45,6 +45,21 @@ Local development (this machine):
 
 See `999online/morelevels-claude-code` for a complete working example.
 
+## Plugins
+
+### web-scaffold
+
+Agentic web scaffolding on incubation architecture standards. Claude discovers idea, walks complexity ladder, picks lightest credible golden path (A landing / B full-stack / C internal tool / E API service), drafts Architecture Decision Record for approval, builds via official scaffolders (`create-next-app`, `create astro`, `create hono` — no bundled templates, no pinned versions), verifies against 8-question decision standard. Generated projects get strict CLAUDE.md structure contract + `.claude/rules/` + one folder-structure guard hook.
+
+```
+/plugin install web-scaffold@999online
+/web-scaffold [one-line idea]
+```
+
+Skills (also standalone): `web-discover` (intake + escalation gate), `web-decide` (ladder → path → ADR), `web-build` (scaffold from ADR), `web-verify` (audit any project against standard).
+
+Needs: Node 22+, npm, network (scaffolders + `@latest` installs). Bundles context7 MCP for current library docs; falls back to WebSearch.
+
 ## Layout
 
 ```

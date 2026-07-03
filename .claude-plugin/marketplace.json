@@ -1,9 +1,18 @@
 {
   "name": "999online",
-  "owner": { "name": "999online" },
+  "owner": {
+    "name": "999online"
+  },
   "metadata": {
     "description": "Claude Code plugin marketplace for 999online developers.",
     "version": "0.1.0"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "web-scaffold",
+      "source": "./plugins/web-scaffold/",
+      "description": "Agentic web project scaffolding on incubation architecture standards \u2014 discover idea, pick lightest credible golden path (landing / full-stack / internal tool / API service), approve ADR, build via official scaffolders, verify against decision standard. Strict structure contract enforced in generated projects.",
+      "version": "0.1.0"
+    }
+  ]
 }

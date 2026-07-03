@@ -1,0 +1,17 @@
+{
+  "name": "web-scaffold",
+  "description": "Agentic web project scaffolding on incubation architecture standards — discover idea, pick lightest credible golden path (landing / full-stack / internal tool / API service), approve ADR, build via official scaffolders, verify against decision standard. Strict structure contract enforced in generated projects.",
+  "version": "0.1.0",
+  "author": {
+    "name": "audrueygana-lmph",
+    "email": "audruey.gana@legalmatch.com"
+  },
+  "repository": "https://github.com/999online/999online-claude-code",
+  "commands": ["./commands/web-scaffold.md"],
+  "skills": [
+    "./skills/web-discover",
+    "./skills/web-decide",
+    "./skills/web-build",
+    "./skills/web-verify"
+  ]
+}
