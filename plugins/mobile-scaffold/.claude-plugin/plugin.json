@@ -1,0 +1,17 @@
+{
+  "name": "mobile-scaffold",
+  "description": "Agentic mobile app scaffolding on incubation architecture standards (Path F) — discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo stack, approve ADR, build via create-expo-app, verify against decision standard. Strict structure contract enforced in generated projects.",
+  "version": "0.2.0",
+  "author": {
+    "name": "audrueygana-lmph",
+    "email": "audruey.gana@legalmatch.com"
+  },
+  "repository": "https://github.com/999online/999online-claude-code",
+  "commands": ["./commands/mobile-scaffold.md"],
+  "skills": [
+    "./skills/mobile-discover",
+    "./skills/mobile-decide",
+    "./skills/mobile-build",
+    "./skills/mobile-verify"
+  ]
+}

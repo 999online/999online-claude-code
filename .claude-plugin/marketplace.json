@@ -13,6 +13,12 @@
       "source": "./plugins/web-scaffold/",
       "description": "Agentic web project scaffolding on incubation architecture standards \u2014 discover idea, pick lightest credible golden path (landing / full-stack / internal tool / API service), approve ADR, build via official scaffolders, verify against decision standard. Strict structure contract enforced in generated projects.",
       "version": "0.1.0"
+    },
+    {
+      "name": "mobile-scaffold",
+      "source": "./plugins/mobile-scaffold/",
+      "description": "Agentic mobile app scaffolding on incubation architecture standards (Path F) \u2014 discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo stack, approve ADR, build via create-expo-app, verify against decision standard. Strict structure contract enforced in generated projects.",
+      "version": "0.2.0"
     }
   ]
 }

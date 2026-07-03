@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/folder-structure-guard.cjs\""
+          }
+        ],
+        "description": "Enforce CLAUDE.md 'Project Structure (STRICT)' via .claude/allowed-paths.json"
+      }
+    ]
+  }
+}

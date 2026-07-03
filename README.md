@@ -60,6 +60,19 @@ Skills (also standalone): `web-discover` (intake + escalation gate), `web-decide
 
 Needs: Node 22+, npm, network (scaffolders + `@latest` installs). Bundles context7 MCP for current library docs; falls back to WebSearch.
 
+### mobile-scaffold
+
+Agentic mobile scaffolding on incubation architecture standards (Path F — mobile/field prototype). Claude discovers idea (native features, platforms, offline, store hypothesis), walks mobile complexity ladder, picks distribution mode per Path F "prefer PWA" rule — PWA (Expo web output on Cloudflare) / native (Expo Go → EAS internal distribution) / both — one Expo codebase either way. Drafts Architecture Decision Record for approval, builds via `create-expo-app` (no bundled templates, no pinned versions; optional Hono-on-Workers backend in `server/`), verifies against 8-question decision standard + expo-doctor + no-secrets-in-bundle grep. Generated projects get strict CLAUDE.md structure contract + `.claude/rules/` (structure, delivery, security, Apple App Review + HIG, Android core quality + Play policy) + folder-structure guard hook (`ios/`/`android/` forbidden — managed workflow enforced).
+
+```
+/plugin install mobile-scaffold@999online
+/mobile-scaffold [one-line idea]
+```
+
+Skills (also standalone): `mobile-discover` (intake + escalation gate), `mobile-decide` (ladder → distribution mode → ADR), `mobile-build` (scaffold from ADR), `mobile-verify` (audit any Expo project against standard).
+
+Needs: Node 22+, npm, network; Expo Go app on a phone for local run; free Expo account for EAS deploy; Cloudflare account for PWA/backend deploy. Bundles context7 MCP for current library docs; falls back to WebSearch. Pure desk web app → use web-scaffold instead (decide stage redirects).
+
 ## Layout
 
 ```
