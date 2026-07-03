@@ -44,15 +44,18 @@ Same as path B contract, plus:
 
 Starter `allowed-paths.json`: use path B block.
 
-## Feature slice (minimum build proves)
+## Scaffold output (stubs only)
 
-1. SSO or managed-auth login; unauthenticated = no access, no public pages.
-2. One workflow screen: table/list of real-ish records (imported, synthetic, or limited API pull) + the one action the workflow needs (approve/assign/update status).
-3. Status change persisted with who + when (audit trail matters when decisions run through tool).
-4. Access limited to first operating team (allowlist or SSO domain restriction) — approach recorded in ADR.
+1. Same as path B: stub page, health route, `.gitkeep` contract dirs, `.env.example`.
+2. Stub page states "internal tool — SSO required before real data".
+3. Access approach (allowlist or SSO domain restriction) recorded in ADR — not implemented.
+4. README "Next steps" section: SSO/Cloudflare Access, workflow screen, audit trail — from ADR.
+
+Planned integrations → README Next steps, never code. NO login, NO workflow screen, NO audit.ts.
 
 ## Verify notes
 
-- No route reachable without auth.
-- Data source documented in ADR: import/synthetic/limited-scope, not live core-system writes.
-- Audit/status history present when tool makes or records decisions.
+- Build/check passes; stub page + health route present.
+- No auth code, no data-source wiring, no workflow screens — feature code present = scope-creep fail.
+- ADR documents access approach + data source plan (import/synthetic/limited-scope, not live core-system writes).
+- README Next steps documents ADR's planned integrations.

@@ -91,21 +91,24 @@ Starter `allowed-paths.json` (reconcile against actual tree; drop `server/**` wh
 
 Rationale: `ios/**` + `android/**` forbidden = managed-workflow contract — those dirs appearing means someone ran `prebuild`/`run:ios`, an architecture change that goes through ADR first. `src/**`/`pages/**`/`public/**` = web-project drift. Junk-drawer dirs forbidden = shared code goes in `lib/`.
 
-## Feature slice (minimum build proves)
+## Scaffold output (stubs only)
 
-1. One screen proving the hypothesis flow.
-2. Native-feature stub only if core to hypothesis (e.g. `expo-camera` capture wired into the slice) — else none.
-3. Backend present → health route (`GET /health`) + one read/CRUD endpoint, input validated, structured errors `{error: {code, message}}`; app calls it via client in `lib/`.
-4. Auth only when audience requires — managed provider, session persisted in expo-secure-store, unauthenticated screens redirect.
-5. Explicit offline statement in README — even "requires connectivity; shows offline notice".
-6. `.env.example` complete: every `EXPO_PUBLIC_` var with placeholder + public-bundle comment.
+1. `app/index.tsx` stub screen: app name + one-line hypothesis from ADR.
+2. `.gitkeep` for empty contract dirs — create `lib/` (post-reset template lacks it); `components/`, `hooks/`, `constants/` as needed.
+3. Backend ONLY when ADR names one → Hono `server/` + `GET /health` returning `{ok: true, version}` + `.dev.vars.example`. No D1, no feature endpoints.
+4. `.env.example` complete: every planned `EXPO_PUBLIC_` var with placeholder + public-bundle comment (`EXPO_PUBLIC_API_URL` when backend exists).
+5. Explicit offline statement in README — even "requires connectivity; shows offline notice" (documents ADR field).
+6. README "Next steps" section: native feature per ADR, auth provider, API client in `lib/` — from ADR.
+
+Planned integrations → README Next steps, never code. NO native-feature code, NO auth/secure-store, NO API client.
 
 ## Verify notes
 
 - `npm run check` passes; `npx expo export --platform ios --platform android` bundles clean (add `--platform web` in PWA mode).
 - `npx expo-doctor` clean.
-- No non-`EXPO_PUBLIC_` secrets in tracked files; tokens via expo-secure-store, not AsyncStorage.
+- Stub index screen present; no feature code in `lib/` — auth/native/API-client code present = scope-creep fail.
+- No non-`EXPO_PUBLIC_` secrets in tracked files.
 - `ios/`/`android/` dirs absent.
-- Offline behavior documented in README.
+- Offline behavior documented in README; README Next steps documents ADR's planned integrations.
 - App boots in Expo Go (manual QR step — mark pending if no device available).
-- Backend present → health + main endpoint respond locally (`server:dev`, curl both).
+- Backend present → `GET /health` responds locally (`server:dev`, curl).

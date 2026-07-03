@@ -1,12 +1,12 @@
 ---
-description: Scaffold a mobile app the agentic way — discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo architecture, approve ADR, build via create-expo-app, verify against decision standard. Full pipeline, one command.
+description: Scaffold a mobile app the agentic way — discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo architecture, approve ADR, scaffold via create-expo-app (stubs only, zero feature code), verify against decision standard. Full pipeline, one command.
 argument-hint: [one-line idea (optional)]
 allowed-tools: AskUserQuestion, Skill, Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch
 ---
 
 # /mobile-scaffold
 
-Full pipeline: discover → decide → build → verify. Idea → distribution-ready Expo validation project, lightest credible architecture, strict structure.
+Full pipeline: discover → decide → build → verify. Idea → Expo scaffold: architecture decided, structure enforced, `.claude` assets in place, stub code only. Feature work happens inside generated project — never in this pipeline.
 
 `$ARGUMENTS` = optional one-line idea. Missing/empty → fine, intake asks. Present → seed intake, skip answered questions.
 
@@ -34,9 +34,10 @@ After verify, single summary:
   - Native: `npm run deploy` (EAS Update) / `npm run deploy:prod` (internal-distribution build); remaining setup: `npm i -g eas-cli`, `eas login`, `eas init`.
 - Env vars to fill (from `.env.example` — all `EXPO_PUBLIC_`, all public).
 - Escalations pending decision owner, if any — distribution blocked until cleared (incl. Apple $99/yr / Play $25 account purchases, trigger 9).
+- Next steps: planned integrations from generated README Next steps section — feature work happens inside project, guided by its CLAUDE.md + ADR.
 - ADR location: `docs/ADR.md`.
 - Cost note: EAS free tier + expected tier + shutdown path (from ADR).
-- Delivery-target framing: "On a phone today via Expo Go. First shareable artifact target: 1–2 working days — `npm run deploy` after account login."
+- Delivery framing: "Stub scaffold on a phone today via Expo Go. Deploys as-is — `npm run deploy` after account login. Feature work follows inside project."
 
 ## Failure handling
 

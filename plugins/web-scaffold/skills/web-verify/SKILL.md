@@ -1,6 +1,6 @@
 ---
 name: web-verify
-description: Audit web project against architecture decision standard and deployment baseline — build must pass, 8 decision questions answered with repo evidence, structure guard functional. Use after web-build, or standalone to audit any existing project against the standard. Read-heavy; only writes fixes for failures it finds.
+description: Audit scaffolded web project against architecture decision standard and deployment baseline — build must pass, 8 decision questions answered with repo evidence, structure guard functional, no feature code beyond stubs. Structural audit, not app-behavior QA. Use after web-build, or standalone to audit any existing project against the standard. Read-heavy; only writes fixes for failures it finds.
 ---
 
 # web-verify
@@ -21,7 +21,7 @@ Audit each against repo evidence per decision-standard.md evidence column. Concr
 
 - Secrets: `.env.example` exists; `.env*` in `.gitignore`; grep tracked files for key/token/secret literals — hits = fail.
 - Run/deploy/logs: npm scripts exist AND README documents them.
-- Auth vs audience: compare ADR audience against implemented auth.
+- Auth vs audience: ADR auth approach matches audience. No auth code expected at scaffold stage — auth code present = scope-creep flag.
 - Rollback: README section exists, covers each integration.
 
 ## 3. Deployment baseline
@@ -39,11 +39,11 @@ Audit each against repo evidence per decision-standard.md evidence column. Concr
   ```
 - Actual tree matches CLAUDE.md structure table — no dirs outside contract, no forbidden dirs present.
 
-## 5. Path-specific checks
+## 5. Path-specific structural checks
 
-Run "Verify notes" from project's golden-path doc `${CLAUDE_PLUGIN_ROOT}/references/golden-paths/path-<X>.md` (A: form reaches destination, no auth/DB; B: CRUD slice works, no custom auth code; C: no unauthenticated route; E: endpoints respond locally, idempotency present).
+Run "Verify notes" from project's golden-path doc `${CLAUDE_PLUGIN_ROOT}/references/golden-paths/path-<X>.md` (A: stub page present, no form/analytics code; B/C: stub page + health route present, no auth/DB code; E: `GET /health` responds locally, no feature endpoints). Feature code beyond stubs = scope-creep fail.
 
-Checks needing external accounts (real deploy, live form destination) → don't fake: mark "pending — needs <account>", list as user follow-up.
+Checks needing external accounts (real deploy) → don't fake: mark "pending — needs <account>", list as user follow-up.
 
 ## Report
 
@@ -54,7 +54,7 @@ Decision standard: 8 rows — PASS/FAIL + evidence each
 Deployment baseline: PASS/FAIL per item
 Structure contract: PASS/FAIL
 Path checks: PASS/FAIL/PENDING per item
-Verdict: READY FOR DEPLOY / NOT READY (blockers listed) / READY WITH PENDING ITEMS
+Verdict: SCAFFOLD READY / NOT READY (blockers listed) / SCAFFOLD READY WITH PENDING ITEMS
 ```
 
-Escalation triggers recorded in ADR → verdict caps at "NOT READY — escalation pending decision owner".
+Escalation triggers recorded in ADR → verdict becomes "SCAFFOLD READY — deploy blocked pending decision owner" (local scaffold fine per doctrine; deploy blocked until cleared).

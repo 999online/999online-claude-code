@@ -74,16 +74,20 @@ Starter `allowed-paths.json` (reconcile against actual tree):
 
 Rationale: `packages/`, `services/` forbidden = no premature monorepo/microservices. Junk-drawer dirs forbidden = shared code goes in `src/lib`.
 
-## Feature slice (minimum build proves)
+## Scaffold output (stubs only)
 
-1. Auth flow: sign in via managed auth (magic link or OAuth), protected route redirects unauthenticated users.
-2. One CRUD slice end-to-end: create + list one core entity, persisted in DB, scoped to logged-in user.
-3. Schema/migration captured (SQL file or migration tool output committed).
-4. `.env.example` lists every required key with placeholder.
+1. `src/app/page.tsx` stub: app name + one-line hypothesis from ADR.
+2. `src/app/api/health/route.ts` returning `{ok: true, version}`.
+3. `.gitkeep` in `src/components/`, `src/lib/`, `src/server/`, `src/types/`.
+4. Deploy/platform wiring per ADR (`@opennextjs/cloudflare`, wrangler config) — architecture, not feature.
+5. `.env.example` lists every planned key with placeholder.
+6. README "Next steps" section: auth provider, schema + migrations, first CRUD entity — from ADR.
+
+Planned integrations → README Next steps, never code. NO auth, NO DB client, NO migrations, NO CRUD.
 
 ## Verify notes
 
 - `npm run check` passes (typecheck + lint + build).
-- CRUD slice works against local/dev database, or documented as blocked on account provisioning.
-- Auth pages come from managed provider — no password-hashing code in repo.
-- Per-user access scoping enforced in data layer (D1) or via row-level security (Postgres), noted in ADR.
+- Stub page + health route present.
+- No auth code, no DB client, no CRUD routes — feature code present = scope-creep fail.
+- `.env.example` complete; README Next steps documents ADR's planned integrations.

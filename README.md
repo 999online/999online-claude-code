@@ -49,27 +49,27 @@ See `999online/morelevels-claude-code` for a complete working example.
 
 ### web-scaffold
 
-Agentic web scaffolding on incubation architecture standards. Claude discovers idea, walks complexity ladder, picks lightest credible golden path (A landing / B full-stack / C internal tool / E API service), drafts Architecture Decision Record for approval, builds via official scaffolders (`create-next-app`, `create astro`, `create hono` — no bundled templates, no pinned versions), verifies against 8-question decision standard. Generated projects get strict CLAUDE.md structure contract + `.claude/rules/` + one folder-structure guard hook.
+Agentic web scaffolding on incubation architecture standards. **Scaffold only — stubs, zero feature code.** Claude discovers idea, walks complexity ladder, picks lightest credible golden path (A landing / B full-stack / C internal tool / E API service), drafts Architecture Decision Record for approval, scaffolds via official scaffolders (`create-next-app`, `create astro`, `create hono` — no bundled templates, no pinned versions), verifies structurally against 8-question decision standard. Output: architecture in place, correct file structure, stub page + health route, strict CLAUDE.md structure contract + `.claude/rules/` + folder-structure guard hook. Feature work happens inside generated project — planned integrations land in README Next steps, never code.
 
 ```
 /plugin install web-scaffold@999online
 /web-scaffold [one-line idea]
 ```
 
-Skills (also standalone): `web-discover` (intake + escalation gate), `web-decide` (ladder → path → ADR), `web-build` (scaffold from ADR), `web-verify` (audit any project against standard).
+Skills (also standalone): `web-discover` (intake + escalation gate), `web-decide` (ladder → path → ADR), `web-build` (scaffold stubs from ADR), `web-verify` (structural audit against standard).
 
 Needs: Node 22+, npm, network (scaffolders + `@latest` installs). Bundles context7 MCP for current library docs; falls back to WebSearch.
 
 ### mobile-scaffold
 
-Agentic mobile scaffolding on incubation architecture standards (Path F — mobile/field prototype). Claude discovers idea (native features, platforms, offline, store hypothesis), walks mobile complexity ladder, picks distribution mode per Path F "prefer PWA" rule — PWA (Expo web output on Cloudflare) / native (Expo Go → EAS internal distribution) / both — one Expo codebase either way. Drafts Architecture Decision Record for approval, builds via `create-expo-app` (no bundled templates, no pinned versions; optional Hono-on-Workers backend in `server/`), verifies against 8-question decision standard + expo-doctor + no-secrets-in-bundle grep. Generated projects get strict CLAUDE.md structure contract + `.claude/rules/` (structure, delivery, security, Apple App Review + HIG, Android core quality + Play policy) + folder-structure guard hook (`ios/`/`android/` forbidden — managed workflow enforced).
+Agentic mobile scaffolding on incubation architecture standards (Path F — mobile/field prototype). **Scaffold only — stubs, zero feature code.** Claude discovers idea (native features, platforms, offline, store hypothesis), walks mobile complexity ladder, picks distribution mode per Path F "prefer PWA" rule — PWA (Expo web output on Cloudflare) / native (Expo Go → EAS internal distribution) / both — one Expo codebase either way. Drafts Architecture Decision Record for approval, scaffolds via `create-expo-app` (no bundled templates, no pinned versions; optional Hono-on-Workers backend stub in `server/` with `/health` only), verifies structurally against 8-question decision standard + expo-doctor + no-secrets-in-bundle grep. Output: architecture in place, correct file structure, stub index screen, strict CLAUDE.md structure contract + `.claude/rules/` (structure, delivery, security, Apple App Review + HIG, Android core quality + Play policy) + folder-structure guard hook (`ios/`/`android/` forbidden — managed workflow enforced). Feature work happens inside generated project — planned integrations land in README Next steps, never code.
 
 ```
 /plugin install mobile-scaffold@999online
 /mobile-scaffold [one-line idea]
 ```
 
-Skills (also standalone): `mobile-discover` (intake + escalation gate), `mobile-decide` (ladder → distribution mode → ADR), `mobile-build` (scaffold from ADR), `mobile-verify` (audit any Expo project against standard).
+Skills (also standalone): `mobile-discover` (intake + escalation gate), `mobile-decide` (ladder → distribution mode → ADR), `mobile-build` (scaffold stubs from ADR), `mobile-verify` (structural audit of any Expo project against standard).
 
 Needs: Node 22+, npm, network; Expo Go app on a phone for local run; free Expo account for EAS deploy; Cloudflare account for PWA/backend deploy. Bundles context7 MCP for current library docs; falls back to WebSearch. Pure desk web app → use web-scaffold instead (decide stage redirects).
 

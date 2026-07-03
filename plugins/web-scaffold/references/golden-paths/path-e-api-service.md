@@ -73,16 +73,16 @@ Starter `allowed-paths.json` (reconcile against actual tree):
 
 Rationale: UI dirs forbidden — service has no frontend; one appearing signals path drift.
 
-## Feature slice (minimum build proves)
+## Scaffold output (stubs only)
 
-1. Health route (`GET /health`) returning version + ok.
-2. One read-only endpoint serving the hypothesis, input validated at boundary, structured error shape `{error: {code, message}}`.
-3. Webhook handler shape when integration is webhook-driven: signature/secret check stub + idempotency guard.
-4. Request logging visible in platform logs (wrangler tail or equivalent).
+1. Health route (`GET /health`) returning `{ok: true, version}` — only route.
+2. `.gitkeep` in `src/routes/`, `src/services/`, `src/schemas/`, `src/lib/`.
+3. README "Next steps" section: first endpoint + validation schema, webhook handler + idempotency guard, request logging — from ADR.
+
+Planned integrations → README Next steps, never code. NO feature endpoints, NO webhook handler.
 
 ## Verify notes
 
-- Health + main endpoint respond locally (`wrangler dev` / `npm run dev`, curl both).
-- Write endpoints absent, or ADR records why write access required for validation.
-- Idempotency present in webhook/job handlers.
-- README rollback section covers each integration separately.
+- Build/check passes; `GET /health` responds locally (`wrangler dev` / `npm run dev`, curl).
+- No routes beyond health — feature endpoints present = scope-creep fail.
+- README Next steps documents ADR's planned endpoints + integrations.

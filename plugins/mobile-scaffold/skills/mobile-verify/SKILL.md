@@ -1,6 +1,6 @@
 ---
 name: mobile-verify
-description: Audit Expo mobile project against architecture decision standard and deployment baseline — bundle must build, expo-doctor clean, 8 decision questions answered with repo evidence, no secrets in public bundle, structure guard functional. Use after mobile-build, or standalone to audit any existing Expo project against the standard. Read-heavy; only writes fixes for failures it finds.
+description: Audit scaffolded Expo project against architecture decision standard and deployment baseline — bundle must build, expo-doctor clean, 8 decision questions answered with repo evidence, no secrets in public bundle, structure guard functional, no feature code beyond stubs. Structural audit, not app-behavior QA. Use after mobile-build, or standalone to audit any existing Expo project against the standard. Read-heavy; only writes fixes for failures it finds.
 ---
 
 # mobile-verify
@@ -26,9 +26,9 @@ Read `${CLAUDE_PLUGIN_ROOT}/references/decision-standard.md`, `${CLAUDE_PLUGIN_R
 Audit each against repo evidence per decision-standard.md evidence column. Concrete checks:
 
 - Secrets: `.env.example` exists; `.env*` in `.gitignore`; **grep tracked files for key/token/secret literals AND for non-`EXPO_PUBLIC_`-prefixed env references holding credentials — any hit = fail (bundle is public)**. Backend present → `server/.dev.vars` gitignored, `.dev.vars.example` committed.
-- Token storage: auth present → session persisted via expo-secure-store; grep for tokens in AsyncStorage = fail.
+- Token storage: no auth code expected at scaffold stage — ADR documents auth plan (managed provider + expo-secure-store). Auth code present anyway = scope-creep flag; then tokens in AsyncStorage = fail.
 - Run/deploy/logs: npm scripts exist AND README documents them.
-- Auth vs audience: compare ADR audience against implemented auth.
+- Auth vs audience: ADR auth approach matches audience — plan check, not implementation check.
 - Rollback: README section exists — pull-a-bad-update (`eas update:republish`) or PWA re-deploy, plus per-integration disable/revoke.
 
 ## 4. Deployment baseline
@@ -47,9 +47,9 @@ Audit each against repo evidence per decision-standard.md evidence column. Concr
 - `ios/` and `android/` dirs absent (managed-workflow contract).
 - Actual tree matches CLAUDE.md structure table — no dirs outside contract, no forbidden dirs present.
 
-## 6. Path F checks
+## 6. Path F structural checks
 
-Run "Verify notes" from `path-f-expo.md`: app boots in Expo Go (manual QR — needs device); backend health + main endpoint respond locally; auth from managed provider (no password-hashing code); native-feature stub only where hypothesis needs it.
+Run "Verify notes" from `path-f-expo.md`: stub index screen present; no feature code in `lib/` (auth/native/API-client code = scope-creep fail); backend present → `GET /health` responds locally (`server:dev`, curl); app boots in Expo Go (manual QR — needs device); README Next steps documents ADR integrations.
 
 Checks needing external accounts or devices (Expo Go boot on phone, EAS publish, TestFlight, live Cloudflare URL) → don't fake: mark "pending — needs <account/device>", list as user follow-up.
 
@@ -63,7 +63,7 @@ Decision standard: 8 rows — PASS/FAIL + evidence each
 Deployment baseline: PASS/FAIL per item
 Structure contract: PASS/FAIL
 Path F checks: PASS/FAIL/PENDING per item
-Verdict: READY FOR VALIDATION DISTRIBUTION / NOT READY (blockers listed) / READY WITH PENDING ITEMS
+Verdict: SCAFFOLD READY / NOT READY (blockers listed) / SCAFFOLD READY WITH PENDING ITEMS
 ```
 
-Escalation triggers recorded in ADR → verdict caps at "NOT READY — escalation pending decision owner".
+Escalation triggers recorded in ADR → verdict becomes "SCAFFOLD READY — distribution blocked pending decision owner" (local scaffold fine per doctrine; distribution blocked until cleared).

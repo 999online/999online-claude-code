@@ -68,15 +68,17 @@ Starter `allowed-paths.json` (reconcile against actual scaffolder output before 
 
 Rationale for forbiddenGlobs: landing page needs no server/db dirs — their appearance signals scope creep past the hypothesis.
 
-## Feature slice (minimum build proves)
+## Scaffold output (stubs only)
 
-1. One landing page: headline, value proposition, single call-to-action.
-2. Signup capture wired to managed form (embed or POST) — submission lands somewhere real the owner can read.
-3. Analytics snippet installed, one event tied to the validation hypothesis (e.g. `signup_submitted`).
-4. Thanks/confirmation state.
+1. `src/pages/index.astro` stub: app name + one-line hypothesis from ADR + placeholder CTA (dead — no form, no POST, no embed).
+2. `.gitkeep` in contract dirs template omits (`src/components/`, `src/layouts/`, `src/styles/`).
+3. `docs/ADR.md`.
+4. README "Next steps" section: form backend choice, analytics + hypothesis event, thanks state — from ADR.
+
+Planned integrations → README Next steps, never code. NO thanks page, NO analytics snippet, NO form wiring.
 
 ## Verify notes
 
-- Form submission reaches its destination (test one real submit, or document manual verification step when destination needs account setup).
-- Analytics event fires (check network call in dev, or document as post-deploy step).
-- No auth, no DB, no admin routes present.
+- Build/check passes; stub index page present.
+- No auth, no DB, no admin routes, no form/analytics code — feature code present = scope-creep fail.
+- README Next steps documents ADR's planned integrations.

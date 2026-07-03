@@ -1,7 +1,7 @@
 {
   "name": "mobile-scaffold",
-  "description": "Agentic mobile app scaffolding on incubation architecture standards (Path F) — discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo stack, approve ADR, build via create-expo-app, verify against decision standard. Strict structure contract enforced in generated projects.",
-  "version": "0.2.0",
+  "description": "Agentic mobile app scaffolding on incubation architecture standards (Path F) — discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo stack, approve ADR, scaffold via create-expo-app (stubs only, zero feature code — feature work happens inside generated project), verify structurally against decision standard. Strict structure contract enforced in generated projects.",
+  "version": "0.3.0",
   "author": {
     "name": "audrueygana-lmph",
     "email": "audruey.gana@legalmatch.com"

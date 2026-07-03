@@ -1,12 +1,12 @@
 ---
-description: Scaffold a web project the agentic way — discover idea, pick lightest credible architecture, approve ADR, build via official scaffolders, verify against decision standard. Full pipeline, one command.
+description: Scaffold a web project the agentic way — discover idea, pick lightest credible architecture, approve ADR, scaffold via official scaffolders (stubs only, zero feature code), verify against decision standard. Full pipeline, one command.
 argument-hint: [one-line idea (optional)]
 allowed-tools: AskUserQuestion, Skill, Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch
 ---
 
 # /web-scaffold
 
-Full pipeline: discover → decide → build → verify. Idea → deployed-ready validation project, lightest credible architecture, strict structure.
+Full pipeline: discover → decide → build → verify. Idea → scaffold: architecture decided, structure enforced, `.claude` assets in place, stub code only. Feature work happens inside generated project — never in this pipeline.
 
 `$ARGUMENTS` = optional one-line idea. Missing/empty → fine, intake asks. Present → seed intake, skip answered questions.
 
@@ -32,9 +32,10 @@ After verify, single summary:
 - Deploy: command + remaining account setup (platform login, project link, env secrets).
 - Env vars to fill (from `.env.example`).
 - Escalations pending decision owner, if any — deploy blocked until cleared.
+- Next steps: planned integrations from generated README Next steps section — feature work happens inside project, guided by its CLAUDE.md + ADR.
 - ADR location: `docs/ADR.md`.
 - Cost note: expected tier + shutdown path (from ADR).
-- Delivery-target framing: "First URL target: 1 working day — run `npm run deploy` after connecting <platform>."
+- Delivery framing: "Scaffold deploys as-is — `npm run deploy` after connecting <platform>. Feature work follows inside project."
 
 ## Failure handling
 
