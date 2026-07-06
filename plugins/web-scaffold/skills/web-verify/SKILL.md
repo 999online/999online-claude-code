@@ -47,7 +47,7 @@ Audit each against repo evidence per decision-standard.md evidence column. Concr
 
 ## 5. Path-specific structural checks
 
-Run "Verify notes" from project's golden-path doc `${CLAUDE_PLUGIN_ROOT}/references/golden-paths/path-<X>.md` (A: stub page present, no form/analytics code; B/C: monorepo present — `apps/web`, `packages/db`, root `turbo.json` + workspaces (`apps/api` unless collapsed per ADR); stub web page + web health route + api `GET /health` present; empty Drizzle schema, no auth/CRUD; E: `GET /health` responds locally, no feature endpoints). Feature code beyond stubs = scope-creep fail.
+Run "Verify notes" from project's golden-path doc `${CLAUDE_PLUGIN_ROOT}/references/golden-paths/path-<X>.md` (A: stub page present, no form/analytics code; B/C: monorepo present — `apps/web` (incl. `src/hooks/`), `apps/api` (always present — never collapsed), `packages/db`, root `turbo.json` + workspaces; each app `tsconfig.json` extends `tsconfig.base.json`; workspace package names use the `@app/*` scope; stub web page + web health route + api `GET /health` present; empty Drizzle schema, no auth/CRUD; E: `GET /health` responds locally, no feature endpoints). Feature code beyond stubs = scope-creep fail.
 
 Checks needing external accounts (real deploy) → don't fake: mark "pending — needs <account>", list as user follow-up.
 

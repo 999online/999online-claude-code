@@ -8,7 +8,7 @@ When NOT: only measuring interest → path A. Internal-team process tool → pat
 
 ## Layout — monorepo (default)
 
-Full-stack default is a **Turborepo + npm-workspaces monorepo**: `apps/web` (frontend), `apps/api` (backend), `packages/db` (shared data layer). Not premature microservices — three workspaces in one repo, one deploy story per app. Idea is genuinely single-surface (all logic in Next route handlers, no shared API) → collapse to `apps/web` + `packages/db` and drop `apps/api`; record in ADR.
+Full-stack default is a **Turborepo + npm-workspaces monorepo**: `apps/web` (frontend), `apps/api` (backend), `packages/db` (shared data layer). Not premature microservices — three workspaces in one repo, one deploy story per app. `apps/api` is **always present** — never collapse it into Next route handlers. A shared Hono backend is part of the contract for both B and C.
 
 ## Layers (first option = default)
 
@@ -48,7 +48,8 @@ npm create hono@latest apps/api -- --template cloudflare-workers --install --pm 
 
 Monorepo glue + data layer (not from a scaffolder — web-build authors these per **current Turborepo + Drizzle docs via context7/WebSearch**, install via `npm install <pkg>@latest`):
 - Root `package.json` with `"workspaces": ["apps/*", "packages/*"]`, `turbo@latest` dev dep.
-- `turbo.json`, `tsconfig.base.json` (path aliases `@/*`, `@app/db`), `.prettierrc.json`, `eslint.config.mjs`, `.nvmrc`.
+- Workspace package names use one scope: `@app/web`, `@app/api`, `@app/db` (scaffolders name packages after the dir — rename). Root scripts reference workspaces as `-w @app/web` etc.
+- `turbo.json`, `tsconfig.base.json` (path aliases `@/*`, `@app/db`), `.prettierrc.json`, `eslint.config.mjs`, `.nvmrc`. **Each app's `tsconfig.json` extends `../../tsconfig.base.json`** and re-declares `@/*` → `./src/*` plus the `@app/db` alias at its own depth — never leave the scaffolder's standalone tsconfig unlinked from the base.
 - `packages/db`: Drizzle + D1 wiring only (config + `createDb` client + empty schema stub). Drizzle/D1 and `@opennextjs/cloudflare` are **data/deploy-layer wiring (architecture), not feature libraries** — installed. Auth SDK, analytics, business CRUD stay out (README Next steps).
 
 Flags rejected → scaffolder `--help` first, never interactive.
@@ -59,6 +60,7 @@ Flags rejected → scaffolder `--help` first, never interactive.
 |---|---|---|
 | `apps/web/src/app/` | Routes, pages, route handlers | Shared business logic |
 | `apps/web/src/components/` | UI components | Data access |
+| `apps/web/src/hooks/` | React hooks (`useX.ts`) | Non-hook utilities |
 | `apps/web/src/lib/` | Clients, web-side helpers | Components |
 | `apps/api/src/index.ts` | Hono app entry, route mounting | Business logic |
 | `apps/api/src/routes/` | Route handlers, thin | Service logic, SQL |
@@ -102,7 +104,7 @@ Rationale: `services/`, `microservices/` forbidden = no split beyond the three w
 4. `packages/db/src/schema.ts`: empty/example schema stub (commented example table — no real entities).
 5. `packages/db/src/index.ts`: `createDb(d1)` → `drizzle(d1)` client wiring only.
 6. `packages/db/drizzle.config.ts`: dialect `sqlite` (D1). `packages/db/migrations/.gitkeep`.
-7. `.gitkeep` in `apps/web/src/{components,lib,server,types}`, `apps/api/src/{routes,services,schemas}`.
+7. `.gitkeep` in `apps/web/src/{components,hooks,lib,server,types}`, `apps/api/src/{routes,services,schemas}`.
 8. Deploy/platform wiring per ADR: `apps/web/open-next.config.ts` + `apps/web/wrangler.jsonc`; `apps/api/wrangler.toml` (D1 binding); root `turbo.json` + workspaces. Architecture, not feature.
 9. `.env.example` lists every planned key with placeholder.
 10. README "Next steps": auth provider, schema + first migration, first CRUD entity — from ADR.
@@ -112,7 +114,7 @@ Planned integrations → README Next steps, never code. NO auth, NO real schema/
 ## Verify notes
 
 - `npm run check` passes at repo root (turbo runs each workspace's typecheck + lint + build).
-- Monorepo present: `apps/web`, `apps/api` (unless collapsed per ADR), `packages/db`, root `turbo.json` + workspaces.
+- Monorepo present: `apps/web` (incl. `src/hooks/`), `apps/api` (always — never collapsed), `packages/db`, root `turbo.json` + workspaces. Each app `tsconfig.json` extends `tsconfig.base.json`; workspace package names use the `@app/*` scope.
 - Stub web page + web health route + api `GET /health` present.
 - No auth code, no real Drizzle schema/migrations, no CRUD routes — feature code present = scope-creep fail.
 - `.env.example` complete; README Next steps documents ADR's planned integrations.
