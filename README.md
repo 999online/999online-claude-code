@@ -4,6 +4,8 @@ Claude Code plugin marketplace for 999online developers. Mirrors the `morelevels
 
 ## Install
 
+### Claude Code (CLI)
+
 ```
 /plugin marketplace add https://github.com/999online/999online-claude-code
 /plugin install <plugin-name>
@@ -14,6 +16,21 @@ Local development (this machine):
 ```
 /plugin marketplace add ~/Desktop/ideas/999online-claude-code
 ```
+
+### Claude Cowork (desktop / web / iOS)
+
+No `/plugin` command in Cowork — add via UI. Needs paid Claude subscription.
+
+Personal (per user):
+
+1. **Cowork** tab → **Customize** → **Plugins**.
+2. **Personal plugins** → **+** → **Add marketplace** → **Add from repository**.
+3. Paste `https://github.com/999online/999online-claude-code`.
+4. Back in **Plugins** → **Browse plugins** → **Install** the plugin you want.
+
+Org-wide (admin): **Organization settings → Plugins → Add plugin → GitHub**, enter `999online/999online-claude-code`. Org GitHub install requires a **private/internal** repo — public repos rejected at org level (personal path above still works for public).
+
+Docs: [use plugins in Claude](https://support.claude.com/en/articles/13837440-use-plugins-in-claude) · [manage org plugins](https://support.claude.com/en/articles/13837433-manage-plugins-for-your-organization).
 
 ## Adding a plugin
 
