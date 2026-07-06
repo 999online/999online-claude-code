@@ -15,7 +15,7 @@ Market + adoption analyst for 999 idea incubation. Answer two things with cited 
 
 Spawned with: idea (description, notes, slug). Write dossier to `${CLAUDE_PROJECT_DIR}/docs/incubation/<slug>/MARKET.md`.
 
-Criteria: read `${CLAUDE_PLUGIN_ROOT}/references/pre-presentation-rulebook.md` (groups B Adoption, C Market) and `${CLAUDE_PLUGIN_ROOT}/references/operating-model-criteria.md` (day-120 targets). Decide from researched evidence, cite every load-bearing claim, say so where you can't verify.
+Criteria: read `${CLAUDE_PLUGIN_ROOT}/references/pre-presentation-rulebook.md` (groups B Adoption, C Market) and `${CLAUDE_PLUGIN_ROOT}/references/operating-model-criteria.md` (day-120 targets). Internal-track adoption signals + validation metrics: `${CLAUDE_PLUGIN_ROOT}/references/operating-model-reference.md`. Decide from researched evidence, cite every load-bearing claim, say so where you can't verify.
 
 ## Method
 1. **Segment + industry.** Name who specifically uses and pays. "Everyone" is not a market — pick one.

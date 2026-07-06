@@ -8,6 +8,7 @@ One page, no more. `web-decide` fills it; `web-build` copies filled version to `
 Date: <YYYY-MM-DD>
 Decision owner: <name — person who clears escalations and makes promote/pause/terminate call>
 Golden path: <A landing | B full-stack | C internal tool | E API service>
+Layout: <single-package | monorepo (apps/web + apps/api + packages/db)> — B/C default monorepo; A/E single-package
 
 ## Hypothesis
 <one sentence — what this deployment must prove>
@@ -22,7 +23,7 @@ Golden path: <A landing | B full-stack | C internal tool | E API service>
 <e.g. npm install && npm run dev>
 
 ## Deployment command or platform
-<e.g. npm run deploy → Vercel preview; npm run deploy:prod>
+<deploy model + command. Path A static: Cloudflare Pages Git integration (dashboard auto-deploy on push + per-branch preview URLs) OR wrangler CLI (npm run deploy / deploy:prod). B/C: npm run deploy → Cloudflare Workers preview; deploy:prod. Monorepo → per-app deploy>
 
 ## Data used
 <source, sensitivity, synthetic/masked/limited-scope; where stored>

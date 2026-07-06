@@ -57,6 +57,8 @@ Idea must credibly meet ALL 5 or does not enter incubation. Rough numbers fine, 
 
 Promote outcomes: **Spin-off** (both thresholds hit) · **KIV** (plausible, milestones not met — record reopen trigger) · **Terminate** (no credible path — capture learnings).
 
+**Proposal must contain** (Venture Validation Lead verifies before/at Dmitry's weekly review): business plan · runnable prototype/demo · validation hypothesis · target audience · named Idea Owner (+ proposed Business Guru) · function owners (Build & Delivery, Validation & Insight, System Oversight) · selected platform + metrics/feedback channel · 30/120/180-day plans · spend plan within caps (marketing pre-approved by Dmitry) · bi-weekly Dmitry update schedule. MVP scoped **only** to validate the current hypothesis. 1st Pass (page 09) is advisory — Practice Leads score readiness, classify Commercial/Internal, add to the registry; **only Dmitry approves**.
+
 ---
 
 ## Page-09 1st-Pass scorecard (Commercial)
@@ -76,7 +78,7 @@ Score each line **0 / 1 / 2**. Line 1 = hard gate: **0 → RETHINK regardless of
 | 9 | Spend | fits caps, or exception named/justified |
 | 10 | Risk | data/security/integration/brand identified and controllable |
 
-**Bands (total /20):** `READY` = software-first 2, nothing scores 0, **total ≥15**. `REFINE` = software-first ≥1, **total 9–14**, or a couple clear gaps. `RETHINK` = software-first 0, **total ≤8**, or no owner.
+**Bands (total /20):** `READY FOR DMITRY` = software-first 2, nothing scores 0, **total ≥15**. `REFINE & RE-PASS` = software-first ≥1, **total 9–14**, or a couple clear gaps. `RETHINK` = software-first 0, **total ≤8**, or no owner. (Rulebook self-check uses shorter `Ready/Refine/Rethink`; page-09 uses these exact labels.)
 
 **One fatal gap outweighs a high total.** Thresholds are guidance, not arithmetic.
 
@@ -84,9 +86,11 @@ Score each line **0 / 1 / 2**. Line 1 = hard gate: **0 → RETHINK regardless of
 
 Same 0/1/2 format, software-first still only hard gate. Lines: 1 Software-first · 2 Internal pain or value (named dept) · 3 Usable build (under practice time, approved platform) · 4 Reach and adoption · 5 Measurable benefit (time saved / cost avoided / risk reduced) · 6 Demo or plan · 7 Owner and maintainer · 8 Hypothesis · 9 Fit with practice time · 10 Risk (esp. employee data / production systems).
 
-**Bands:** `READY FOR PILOT` (software-first 2, no 0, ≥15) · `REFINE` (9–14) · `RETHINK` (≤8 or no owner).
+**Bands:** `READY FOR PILOT` (software-first 2, no 0, ≥15) · `REFINE & RE-PASS` (9–14) · `RETHINK` (≤8 or no owner).
 
 Internal success (replaces the 5 commercial): clear internal pain + people affected · target-group satisfaction (primary signal) · actual adoption · measurable benefit · a team willing to own/maintain · software-first.
+
+**Internal Pilot gate (page 10).** After `READY FOR PILOT`, Dmitry authorizes the pilot — lighter than the commercial Proposal: no 5-criteria case, no spend request, **approves no budget** (runs on practice time). Internal outcomes **Adopt / Promote / KIV / Terminate** decided at the monthly working-level check-in; only **Promote** routes to Dmitry (fresh Proposal, re-proves all 5 commercial criteria). Adopt needs a named owning team + maintainer; Terminate stops work + releases resources + captures learnings.
 
 ---
 
@@ -119,7 +123,7 @@ Climb bottom-up. Stop at first rung that tests hypothesis honestly. Lower rung p
 6. Custom infrastructure
 7. Core-system integration
 
-Prefer managed platforms (Cloudflare, Vercel, Netlify, Firebase, Railway, Render, Fly.io, Neon, Turso). No org core-system dependency unless required.
+Prefer managed platforms + starter templates — pick simplest that tests hypothesis honestly; **no single mandated default**. Options across rungs: Cloudflare (Pages/Workers/D1/KV/R2/Queues), Vercel, Netlify, Supabase, Firebase, Railway, Render, Fly.io, Neon, Turso. Mobile → managed workflow: Expo/React Native, Flutter, PWA, or Ionic. Avoid custom infrastructure + org core-system dependency unless required — record the reason.
 
 ## Escalation triggers (deploy-blocking)
 

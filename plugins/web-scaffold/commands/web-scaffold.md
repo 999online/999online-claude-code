@@ -8,6 +8,8 @@ allowed-tools: AskUserQuestion, Skill, Read, Write, Edit, Bash, Glob, Grep, WebS
 
 Full pipeline: discover → decide → build → verify. Idea → scaffold: architecture decided, structure enforced, `.claude` assets in place, stub code only. Feature work happens inside generated project — never in this pipeline.
 
+Layout: full-stack paths (B/C) scaffold a Cloudflare-targeted Turborepo monorepo (`apps/web` + `apps/api` + `packages/db`); landing (A) and API-only (E) stay single-package. Generated `.claude/` ships 4 guard hooks + 7 rules; project root gets `DEPLOY.md`.
+
 `$ARGUMENTS` = optional one-line idea. Missing/empty → fine, intake asks. Present → seed intake, skip answered questions.
 
 ## Resume check first
@@ -33,9 +35,11 @@ After verify, single summary:
 - Env vars to fill (from `.env.example`).
 - Escalations pending decision owner, if any — deploy blocked until cleared.
 - Next steps: planned integrations from generated README Next steps section — feature work happens inside project, guided by its CLAUDE.md + ADR.
-- ADR location: `docs/ADR.md`.
+- Layout: single-package or monorepo (`apps/web` + `apps/api` + `packages/db`).
+- ADR location: `docs/ADR.md`. Deploy walkthrough: `DEPLOY.md`.
 - Cost note: expected tier + shutdown path (from ADR).
 - Delivery framing: "Scaffold deploys as-is — `npm run deploy` after connecting <platform>. Feature work follows inside project."
+- Promote to automated deploy? Later, run `web-deploy-ci` to add GitHub Actions CI + Cloudflare deploy workflows (opt-in — laptop deploy stays the default).
 
 ## Failure handling
 

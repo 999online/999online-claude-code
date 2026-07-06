@@ -1,7 +1,7 @@
 # Security rules
 
-- **App bundle is public.** All app code, `EXPO_PUBLIC_*` env values, and assets are extractable by any user. Publishable/anon keys only in the app; privileged calls go through backend. App never holds admin/service-role keys.
-- No hardcoded secrets. Backend keys, tokens, connection strings → `server/.dev.vars` locally (gitignored; `.dev.vars.example` committed) + wrangler secrets deployed. `.env.example` documents every `EXPO_PUBLIC_` var with placeholder; real `.env` gitignored, never committed.
+- **App bundle is public.** All app code, `EXPO_PUBLIC_*` env values, `google-services` config, and assets are extractable by any user. Publishable/anon keys only in the app; privileged calls go through the backend repo. App never holds admin/service-role/Firebase service-account keys.
+- No hardcoded secrets. Backend (separate repo) keys, tokens, connection strings, `FIREBASE_SERVICE_ACCOUNT` → `.dev.vars` (Hono, gitignored; `.dev.vars.example` committed) or `.env` (NestJS, gitignored; `.env.example` committed) + deployed secret store (wrangler secret / AWS). Mobile `.env.example` documents every `EXPO_PUBLIC_` var with placeholder; real `.env` gitignored. `google-services.json`/`GoogleService-Info.plist` gitignored.
 - Session tokens on device → `expo-secure-store`. Never AsyncStorage, never `EXPO_PUBLIC_`.
 - No shared personal credentials for deployed services. Service accounts or per-person access.
 - Never build custom authentication — managed auth only (Supabase Auth/Firebase Auth/SSO). Exception: auth itself is the product hypothesis, recorded in ADR.

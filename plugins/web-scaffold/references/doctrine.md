@@ -28,9 +28,10 @@ Climb bottom-up. Stop at first rung that tests hypothesis honestly. Later rung =
 
 ## Default bias
 
-- Managed platforms wherever possible. No custom infra unless validation requires it.
+- Managed platforms wherever possible. No custom infra unless validation requires it. Cloudflare is the house default (Workers/Pages/D1/R2/KV/Queues/Access); other platforms are documented swaps.
 - No dependency on org core systems unless explicitly required.
 - Loosely coupled, API-first.
+- Full-stack default (path B/C) is a workspace monorepo — `apps/web` + `apps/api` + `packages/db` (Turborepo). One repo, three workspaces, one deploy story per app. Not premature microservices; splitting further (`services/`, separate job-worker/admin app) still needs justification. Landing (A) and API-only (E) stay single-package.
 - Environments simple: local + deployed validation. Nothing more without risk justification.
 - Deployment automated or documented as repeatable command.
 - Secrets in secure env management, never in code.

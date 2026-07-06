@@ -49,33 +49,44 @@ See `999online/morelevels-claude-code` for a complete working example.
 
 ### web-scaffold
 
-Agentic web scaffolding on incubation architecture standards. **Scaffold only — stubs, zero feature code.** Claude discovers idea, walks complexity ladder, picks lightest credible golden path (A landing / B full-stack / C internal tool / E API service), drafts Architecture Decision Record for approval, scaffolds via official scaffolders (`create-next-app`, `create astro`, `create hono` — no bundled templates, no pinned versions), verifies structurally against 8-question decision standard. Output: architecture in place, correct file structure, stub page + health route, strict CLAUDE.md structure contract + `.claude/rules/` + folder-structure guard hook. Feature work happens inside generated project — planned integrations land in README Next steps, never code.
+Agentic web scaffolding on incubation architecture standards. **Scaffold only — stubs, zero feature code.** Claude discovers idea, walks complexity ladder, picks lightest credible golden path (A landing / B full-stack / C internal tool / E API service), drafts Architecture Decision Record for approval, scaffolds via official scaffolders (`create-next-app`, `create astro`, `create hono` — no bundled framework templates, no pinned versions), verifies structurally against 8-question decision standard. **Cloudflare is the house default** (Workers/Pages/D1/R2/KV/Queues/Access); Vercel/Netlify stay documented swaps. Full-stack paths (B/C) scaffold a **Turborepo monorepo** — `apps/web` (Next.js) + `apps/api` (Hono/Workers) + `packages/db` (Drizzle/D1); landing (A) and API-only (E) stay single-package. Output: architecture in place, correct file structure, stub page + health route, strict CLAUDE.md structure contract, root `DEPLOY.md`, and a generated `.claude/` with 7 rules + 4 guard hooks (folder-structure, sensitive-file, security-pattern, dependency-audit — no auto-commit). Feature work happens inside generated project — planned integrations land in README Next steps, never code. Landing (A) default first-deploy: **Cloudflare Pages Git integration** — connect repo in dashboard, auto-deploy on push, per-branch preview URLs, zero YAML/secrets. Opt-in promotion: `web-deploy-ci` adds GitHub Actions CI + Cloudflare deploy workflows once a project graduates past laptop/dashboard deploy.
 
 ```
 /plugin install web-scaffold@999online
 /web-scaffold [one-line idea]
 ```
 
-Skills (also standalone): `web-discover` (intake + escalation gate), `web-decide` (ladder → path → ADR), `web-build` (scaffold stubs from ADR), `web-verify` (structural audit against standard).
+Skills (also standalone): `web-discover` (intake + escalation gate), `web-decide` (ladder → path → ADR), `web-build` (scaffold stubs from ADR), `web-verify` (structural audit against standard), `web-deploy-ci` (opt-in — GitHub Actions Cloudflare deploy + CI workflows for a scaffolded repo).
 
-Needs: Node 22+, npm, network (scaffolders + `@latest` installs). Bundles context7 MCP for current library docs; falls back to WebSearch.
+Needs: Node 22+, npm, network (scaffolders + `@latest` installs). Bundles context7 MCP for current library docs; falls back to WebSearch. Pages Git integration (path A default) needs no repo secrets — dashboard-connected. `web-deploy-ci` needs repo secrets `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` (Vercel/Netlify swap documented); you set them, never committed.
 
 ### mobile-scaffold
 
-Agentic mobile scaffolding on incubation architecture standards (Path F — mobile/field prototype). **Scaffold only — stubs, zero feature code.** Claude discovers idea (native features, platforms, offline, store hypothesis), walks mobile complexity ladder, picks distribution mode per Path F "prefer PWA" rule — PWA (Expo web output on Cloudflare) / native (Expo Go → EAS internal distribution) / both — one Expo codebase either way. Drafts Architecture Decision Record for approval, scaffolds via `create-expo-app` (no bundled templates, no pinned versions; optional Hono-on-Workers backend stub in `server/` with `/health` only), verifies structurally against 8-question decision standard + expo-doctor + no-secrets-in-bundle grep. Output: architecture in place, correct file structure, stub index screen, strict CLAUDE.md structure contract + `.claude/rules/` (structure, delivery, security, Apple App Review + HIG, Android core quality + Play policy) + folder-structure guard hook (`ios/`/`android/` forbidden — managed workflow enforced). Feature work happens inside generated project — planned integrations land in README Next steps, never code.
+Agentic mobile scaffolding on incubation architecture standards. **Scaffold only — stubs, zero feature code.** Claude discovers idea (native features, platforms, offline, store hypothesis), picks a **profile** on two axes — **target** (mobile-only / mobile+web) × **size** (small / large) — drafts one Architecture Decision Record for approval, then scaffolds **separate git repos** via official scaffolders (no bundled templates, no pinned versions), and verifies each. **Expo + Cloudflare highest priority; Firebase for notifications.**
+
+Profiles (all TypeScript, all FCM push):
+
+| Profile | Repos emitted | Mobile | State | Backend | DB | Web |
+|---|---|---|---|---|---|---|
+| mobile-only / small | `<n>-mobile`, `<n>-backend` | Expo | zustand | Hono + Workers | D1 | — |
+| mobile-only / large | `<n>-mobile`, `<n>-backend` | Expo | RTK | NestJS | Postgres (AWS) | — |
+| mobile+web / small | `<n>-mobile`, `<n>-web-be` | Expo | zustand | Hono + Workers | D1 | RN-web (`apps/web`) |
+| mobile+web / large | `<n>-mobile`, `<n>-web-be` | Expo | RTK | NestJS | Postgres (AWS) | RN-web (`apps/web`) |
+
+Small = pure Cloudflare (default). Large (NestJS/Postgres/AWS) = ADR-justified escalation (AWS = trigger 7). Each repo own `git` + strict CLAUDE.md structure contract + `.claude/rules/` + `.claude/allowed-paths.json` + folder-structure guard, plus root docs (README/STANDARDS/DEPLOY/PLUGINS-TO-INSTALL/.mcp.json). Mobile: stub index screen, `store/` state stub, base `lib/api.ts`, `expo-notifications` stub, `ios/`/`android/` forbidden (managed workflow). Backend: `GET /health`, DB stub (Drizzle/D1 or TypeORM/Postgres), FCM-send stub, secrets server-side only. Mobile ↔ backend link via `EXPO_PUBLIC_API_URL`. Feature work happens inside generated repos — planned integrations land in README Next steps, never code. PWA default first-deploy: **Cloudflare Pages Git integration** — connect repo in dashboard (build cmd `npx expo export -p web`, output dir `dist`), auto-deploy on push, per-branch preview URLs, zero YAML/secrets; wrangler CLI is the alternative.
 
 ```
 /plugin install mobile-scaffold@999online
 /mobile-scaffold [one-line idea]
 ```
 
-Skills (also standalone): `mobile-discover` (intake + escalation gate), `mobile-decide` (ladder → distribution mode → ADR), `mobile-build` (scaffold stubs from ADR), `mobile-verify` (structural audit of any Expo project against standard).
+Skills (also standalone): `mobile-discover` (intake + axes + escalation gate), `mobile-decide` (ladder → profile → ADR), `mobile-build` (scaffold the Expo mobile repo, delegate the rest), `mobile-service-scaffold` (scaffold the Hono+D1 / NestJS+Postgres backend, ± react-native-web `apps/web`), `mobile-verify` (per-repo structural audit), `mobile-deploy-ci` (opt-in — Cloudflare Pages/Workers deploy + CI; NestJS/AWS + native decline).
 
-Needs: Node 22+, npm, network; Expo Go app on a phone for local run; free Expo account for EAS deploy; Cloudflare account for PWA/backend deploy. Bundles context7 MCP for current library docs; falls back to WebSearch. Pure desk web app → use web-scaffold instead (decide stage redirects).
+Needs: Node 22+, npm, network; Expo Go app on a phone for local run; free Expo account for EAS; Cloudflare account for Pages/Workers/D1; Firebase project for push; AWS for the large backend. PWA via Pages Git integration (default) needs no repo secrets — dashboard-connected. `mobile-deploy-ci` needs repo secrets `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` (you set them, never committed). Bundles context7 MCP for current library docs; falls back to WebSearch. Pure desk web app → use web-scaffold instead (decide stage redirects).
 
 ### idea-incubation-review
 
-Initial research + viability verdict for a raw idea against 999's incubation criteria. Fans out three analysts in parallel (buildability, market/adoption, business), then scores against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09 commercial / page-10 internal scorecard). Enforces the software-first hard gate (fail → auto-RETHINK). Answers *buildable per the operating model?* and *viable per the rulebook?*, classifies Commercial vs Internal track, lists gaps to close + missing presenter deliverables. Writes dossiers + `SUMMARY.md` to `docs/incubation/<slug>/`.
+Initial research + viability verdict for a raw idea against 999's incubation criteria. Fans out three analysts in parallel (buildability, market/adoption, business), then scores against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09 commercial / page-10 internal scorecard). Enforces the software-first hard gate (fail → auto-RETHINK). Answers *buildable per the operating model?* and *viable per the rulebook?*, classifies Commercial vs Internal track, lists gaps to close + missing presenter deliverables. Writes dossiers + `SUMMARY.md` to `docs/incubation/<slug>/`. Stack guidance follows the operating model — prefer managed platforms (Cloudflare/Vercel/Supabase/Firebase/Railway/Render/Fly.io/Neon/Turso), **no mandated default**; pick the simplest credible for the hypothesis; mobile → managed workflow (Expo/Flutter/PWA/Ionic).
 
 ```
 /plugin install idea-incubation-review@999online

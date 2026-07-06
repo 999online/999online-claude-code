@@ -1,0 +1,39 @@
+name: Deploy Worker
+
+on:
+  push:
+    branches: [{{DEFAULT_BRANCH}}]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Cloudflare Workers
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '{{NODE_VERSION}}'
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Check
+        run: npm run check
+      - name: Deploy (retry on transient Cloudflare API errors)
+        run: |
+          n=0
+          until [ "$n" -ge 3 ]; do
+            npm run {{DEPLOY_SCRIPT}} && exit 0
+            n=$((n + 1))
+            echo "::warning::Deploy attempt $n failed (likely a transient Cloudflare API error, e.g. code 10013); retrying in 30s..."
+            sleep 30
+          done
+          echo "::error::Deploy failed after 3 attempts" && exit 1

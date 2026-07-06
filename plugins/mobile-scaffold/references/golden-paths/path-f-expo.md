@@ -1,57 +1,60 @@
-# Path F — Mobile or field prototype (Expo)
+# Golden path — mobile repo (Expo)
+
+The `<name>-mobile` repo. Phone app, all profiles. Backend + web = separate repos (`profiles.md`).
 
 ## When
 
 Users interact through app on their phone: native device features (camera, location, push, offline capture), field-worker context, or store distribution in hypothesis.
 
-When NOT: pure desk workflow → `/web-scaffold` (path B or C). Demand/interest test → web-scaffold path A. No UI, service only → web-scaffold path E.
+When NOT: pure desk workflow → `/web-scaffold` (path B or C). Demand/interest test → web-scaffold path A. No UI, service only → backend repo alone.
 
-## Layers (first option = default)
+## Stack (per profile)
 
-| Layer | Preferred options |
+| Layer | Value |
 |---|---|
-| App framework | **Expo React Native** (managed workflow, Expo Router, TypeScript); Flutter, Ionic — allowed by incubation standards, not scaffolded by this plugin |
-| Distribution | PWA via Expo web output on Cloudflare; EAS Update + internal distribution; TestFlight/Play internal only when required |
-| Backend (only when persistence/auth/API needed) | **Hono + Cloudflare Workers** (`server/` subdir); Confluence-listed alternatives: Supabase, Firebase |
-| Data | Cloudflare D1 via backend; Supabase Postgres; Firebase |
-| Local/offline data | expo-sqlite; AsyncStorage (non-sensitive); expo-secure-store (tokens) |
-| Auth (only when audience requires) | Supabase Auth, Firebase Auth, managed SSO — never custom; token verified in Hono middleware when backend present |
-| Analytics | PostHog RN, Amplitude, backend-side events |
+| App framework | **Expo React Native** (managed workflow, Expo Router, TypeScript) — always |
+| State | **zustand** (small) \| **Redux Toolkit** (large) — from profile |
+| Notifications | **Firebase Cloud Messaging** via `expo-notifications` (managed). Alternative: `@react-native-firebase/messaging` (needs dev build) — record in ADR |
+| Backend link | HTTP to separate backend repo via `EXPO_PUBLIC_API_URL` |
+| Distribution | MOBILE-ONLY: PWA (Expo web → Cloudflare Pages) / native (EAS) / both. MOBILE+WEB: native default (web = separate `-web-be` repo) |
 
-Default combo: Expo managed + EAS Update; add Hono on Workers + D1 when persistence needed. One codebase covers native AND web — distribution mode (from ADR) decides which outputs ship.
+One Expo codebase covers native AND web. Distribution mode (ADR) decides which outputs ship.
 
 ## Avoid
 
 - Native iOS/Android from scratch — managed workflow only.
 - App-store launch as first validation path.
-- `expo prebuild` / bare workflow before validation — `ios/`/`android/` dirs are an architecture change, through ADR first.
+- `expo prebuild` / bare workflow before validation — `ios/`/`android/` dirs = architecture change, ADR first.
 - Custom native module when an Expo SDK module exists.
 - Polishing both platforms when one platform tests the hypothesis.
-- Complex offline sync — offline stays simple and explicit ("requires connectivity" is valid).
+- Complex offline sync — offline stays simple and explicit ("requires connectivity" valid).
+- Firebase admin/service-account keys in app — server-side only.
+- Two web builds — MOBILE+WEB uses the `-web-be` RN-web app, not also mobile PWA (unless ADR deviates).
 
 ## Scaffolder commands (non-interactive)
 
 Default (Expo Router + TypeScript):
 ```bash
-npx create-expo-app@latest <dir> --template default --yes
+npx create-expo-app@latest <name>-mobile --template default --yes
 ```
 
-Then lean baseline via template's own script (run inside `<dir>`):
+Lean baseline via template script (inside dir):
 ```bash
 npm run reset-project   # don't keep example files; delete app-example/ after
 ```
-`reset-project` script absent (template version drift) → move example screens out manually, keep clean `app/` with one index route.
+`reset-project` absent (template drift) → move example screens out manually, keep clean `app/` with one index route.
 
 Dependencies:
-- Expo/RN-coupled packages (`expo-*`, `react-native-*`): `npx expo install <pkg>` — resolves SDK-compatible version. Never `npm install <pkg>@latest` for these.
-- Pure-JS packages: `npm install <pkg>@latest`.
+- Expo/RN-coupled (`expo-*`, `react-native-*`, `expo-notifications`): `npx expo install <pkg>` — SDK-matched version. Never `npm install <pkg>@latest` for these.
+- Pure-JS (`zustand`, `@reduxjs/toolkit`, `react-redux`): `npm install <pkg>@latest`.
 
-Backend (when needed, same command as web-scaffold path E):
-```bash
-npm create hono@latest server -- --template cloudflare-workers --install --pm npm
-```
+State:
+- small → `npm install zustand`
+- large → `npm install @reduxjs/toolkit react-redux`
 
-PWA output: `npx expo export --platform web` → static `dist/`; deploy to Cloudflare via wrangler (exact assets wiring from current docs at build time — context7/WebSearch).
+Notifications → `npx expo install expo-notifications` (+ `expo-device`).
+
+PWA output (when distribution mode PWA/both): `npx expo export --platform web` → static `dist/`; deploy Cloudflare Pages/Workers via wrangler (exact assets wiring from current docs — context7/WebSearch), or Cloudflare Pages dashboard Git integration (auto-deploy on push, per-branch preview URLs) — see `deployment.md`.
 
 Flags rejected → scaffolder `--help` first, never interactive.
 
@@ -63,52 +66,59 @@ Flags rejected → scaffolder `--help` first, never interactive.
 | `components/` | UI components | Data access, routes |
 | `hooks/` | Reusable hooks | Components |
 | `constants/` | Theme, static config | Runtime logic, secrets |
-| `lib/` | API clients, services, shared logic | Components |
+| `lib/` | API client, services, shared logic | Components |
+| `store/` | State — zustand slices (small) or RTK store + slices (large) | UI, screens |
 | `assets/` | Images, fonts | Source code |
 | `scripts/` | Template maintenance scripts | App logic |
-| `server/` | Optional Hono Workers backend | UI imports |
 | `docs/` | ADR, all other .md | — |
 
-Starter `allowed-paths.json` (reconcile against actual tree; drop `server/**` when no backend):
+Backend is NOT a subdir here — it is the separate `<name>-backend` (or `<name>-web-be`) repo.
+
+Starter `allowed-paths.json` (reconcile against actual tree):
 
 ```json
 {
   "allowedGlobs": [
     "app/**", "components/**", "hooks/**", "constants/**", "lib/**",
-    "assets/**", "scripts/**", "server/**", "docs/**", ".claude/**",
+    "store/**", "assets/**", "scripts/**", "docs/**", ".claude/**",
     "*.json", "*.js", "*.mjs", "*.cjs", "*.ts", "*.tsx",
     ".gitignore", ".env.example", ".nvmrc", "expo-env.d.ts"
   ],
   "forbiddenGlobs": [
     "{utils,helpers,common,shared,misc}/**",
     "ios/**", "android/**",
-    "src/**", "pages/**", "public/**"
+    "src/**", "pages/**", "public/**", "server/**"
   ],
-  "rootOnlyFiles": [".gitignore", ".env.example", ".nvmrc", "app.json", "eas.json", "expo-env.d.ts"],
-  "exemptRootMd": ["README.md", "CLAUDE.md"]
+  "rootOnlyFiles": [".gitignore", ".env.example", ".nvmrc", "app.json", "eas.json", "expo-env.d.ts", ".mcp.json"],
+  "exemptRootMd": ["README.md", "CLAUDE.md", "STANDARDS.md", "DEPLOY.md", "PLUGINS-TO-INSTALL.md"]
 }
 ```
 
-Rationale: `ios/**` + `android/**` forbidden = managed-workflow contract — those dirs appearing means someone ran `prebuild`/`run:ios`, an architecture change that goes through ADR first. `src/**`/`pages/**`/`public/**` = web-project drift. Junk-drawer dirs forbidden = shared code goes in `lib/`.
+Rationale: `ios/**`+`android/**` forbidden = managed-workflow contract (prebuild/run = architecture change → ADR). `src/**`/`pages/**`/`public/**` = web-project drift. `server/**` forbidden = backend is a separate repo, never nested here. Junk-drawer dirs forbidden = shared code in `lib/`, state in `store/`.
 
 ## Scaffold output (stubs only)
 
 1. `app/index.tsx` stub screen: app name + one-line hypothesis from ADR.
-2. `.gitkeep` for empty contract dirs — create `lib/` (post-reset template lacks it); `components/`, `hooks/`, `constants/` as needed.
-3. Backend ONLY when ADR names one → Hono `server/` + `GET /health` returning `{ok: true, version}` + `.dev.vars.example`. No D1, no feature endpoints.
-4. `.env.example` complete: every planned `EXPO_PUBLIC_` var with placeholder + public-bundle comment (`EXPO_PUBLIC_API_URL` when backend exists).
-5. Explicit offline statement in README — even "requires connectivity; shows offline notice" (documents ADR field).
-6. README "Next steps" section: native feature per ADR, auth provider, API client in `lib/` — from ADR.
+2. `.gitkeep` for empty contract dirs — create `lib/`, `store/` (post-reset template lacks them); `components/`, `hooks/`, `constants/` as needed.
+3. `store/` stub — infra only, NO feature state:
+   - small: `store/app-store.ts` — one zustand store, single placeholder field + setter.
+   - large: `store/index.ts` (`configureStore`) + `store/app-slice.ts` (one slice, placeholder field); `<Provider>` wired in `app/_layout.tsx`.
+4. `lib/api.ts` stub — base HTTP client reading `EXPO_PUBLIC_API_URL`; one `apiFetch(path)` wrapper + `health()` ping. NO domain endpoints (glue, not feature).
+5. `lib/notifications.ts` stub — `expo-notifications` register + get-token + log; permission-gated. NO send logic, NO topic wiring. Send happens server-side (backend repo).
+6. `.env.example` complete: `EXPO_PUBLIC_API_URL` (backend base URL) + public Firebase config (`EXPO_PUBLIC_FIREBASE_*`) with placeholders + public-bundle comment.
+7. `google-services.json` / `GoogleService-Info.plist` — gitignored; README documents provisioning per env. Never committed.
+8. Explicit offline statement in README — even "requires connectivity; shows offline notice".
+9. README "Next steps": native feature per ADR, auth provider, real API endpoints in `lib/`, FCM send integration — from ADR.
 
-Planned integrations → README Next steps, never code. NO native-feature code, NO auth/secure-store, NO API client.
+Planned features → README Next steps, never code. NO auth/secure-store beyond stub, NO native-feature code, NO domain API endpoints.
 
 ## Verify notes
 
-- `npm run check` passes; `npx expo export --platform ios --platform android` bundles clean (add `--platform web` in PWA mode).
+- `npm run check` passes; `npx expo export --platform ios --platform android` bundles clean (add `--platform web` in PWA/both mode).
 - `npx expo-doctor` clean.
-- Stub index screen present; no feature code in `lib/` — auth/native/API-client code present = scope-creep fail.
-- No non-`EXPO_PUBLIC_` secrets in tracked files.
+- Stub index screen present; `store/` has infra-only stub; `lib/api.ts` has no domain endpoints; `lib/notifications.ts` has no send logic — feature code = scope-creep fail.
+- No non-`EXPO_PUBLIC_` secrets in tracked files; no Firebase admin key; `google-services.*` not committed.
 - `ios/`/`android/` dirs absent.
 - Offline behavior documented in README; README Next steps documents ADR's planned integrations.
+- `EXPO_PUBLIC_API_URL` present in `.env.example` (points at backend repo's dev/validation URL).
 - App boots in Expo Go (manual QR step — mark pending if no device available).
-- Backend present → `GET /health` responds locally (`server:dev`, curl).

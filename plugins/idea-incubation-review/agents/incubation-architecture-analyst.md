@@ -16,12 +16,12 @@ Buildability analyst for 999 idea incubation. Judge whether idea can be **built 
 Spawned with: idea (description, notes, slug). Write dossier to `${CLAUDE_PROJECT_DIR}/docs/incubation/<slug>/BUILDABILITY.md`.
 
 ## Criteria source
-Read `${CLAUDE_PLUGIN_ROOT}/references/operating-model-criteria.md` — authoritative. If a Confluence-reader MCP connected (tools named like `confluence_search` / `confluence_get_page`, per `${CLAUDE_PLUGIN_ROOT}/references/confluence-mcp-setup.md`): search space PIH for "Idea Incubation Operating Model", fetch pages 00 / 03-a. Compare thresholds to snapshot. Differ → note "criteria drift — snapshot v1 may be stale" with what changed. No MCP / auth fail / no match → use snapshot, name the page you could not resolve. Record which source you used.
+Read `${CLAUDE_PLUGIN_ROOT}/references/operating-model-criteria.md` — authoritative. For golden paths, deployment, data/security, operations detail: `${CLAUDE_PLUGIN_ROOT}/references/operating-model-reference.md`. If a Confluence-reader MCP connected (tools named like `confluence_search` / `confluence_get_page`, per `${CLAUDE_PLUGIN_ROOT}/references/confluence-mcp-setup.md`): search space PIH for "Idea Incubation Operating Model", fetch pages 00 / 03-a. Compare thresholds to snapshot. Differ → note "criteria drift — snapshot v1 may be stale" with what changed. No MCP / auth fail / no match → use snapshot, name the page you could not resolve. Record which source you used.
 
 ## Method
 1. **Software-first hard gate.** Can it be delivered + operated through profitability with no new headcount, no manual process, no physical presence? If it needs people to run the service → FAIL. This overrides everything.
 2. **Architecture Decision Standard.** Score the 8 yes/no questions. List every "no".
-3. **Stack rung.** Pick lightest-credible rung on the complexity ladder that tests the hypothesis honestly. Name platform (prefer managed).
+3. **Stack rung.** Pick lightest-credible rung on the complexity ladder that tests the hypothesis honestly. Prefer managed platforms — **no mandated default**: Cloudflare, Vercel, Netlify, Supabase, Firebase, Railway, Render, Fly.io, Neon, Turso; mobile → managed workflow (Expo/React Native, Flutter, PWA, Ionic). Custom infra / org core-system only if required — name the blocker. Name platform + services.
 4. **30-day MVP feasibility.** Can one small team launch a viable MVP in 30 days on an approved platform? What's the smallest useful version?
 5. **Escalation triggers.** Which of the 8 fire (prod system of record, sensitive/regulated data, privileged creds, external comms, payments/legal, new cloud/networking, SLA/DR)? Any that imply mandatory manual ops → also breaches software-first.
 
@@ -33,7 +33,7 @@ Read `${CLAUDE_PLUGIN_ROOT}/references/operating-model-criteria.md` — authorit
 ## Architecture Decision Standard: <n>/8 yes
 <table: # | question | yes/no | note>  — list every "no".
 ## Lightest-credible stack rung
-<rung # + name + platform + why this rung not lower/higher>
+<rung # + name + platform/services + why this rung not lower/higher + if custom infra or core-system dependency, the limitation that forced it>
 ## 30-day MVP feasibility: yes | no
 <smallest useful version; why 30 days is / isn't credible>
 ## Escalation triggers firing

@@ -16,6 +16,8 @@ When NOT: users must interact with persisted state or accounts → path B. Inter
 | Analytics | Plausible, PostHog, Cloudflare Web Analytics, Vercel Analytics, GA |
 | Email capture | Managed form backend, ConvertKit, Mailchimp, Resend, Cloudflare Workers form handler + D1 table |
 
+Default deploy: **Cloudflare Pages via dashboard Git integration** — connect repo once, auto-deploy on push, per-branch preview URLs, zero YAML/secrets (see `deployment.md`). wrangler CLI is the alternative.
+
 ## Avoid
 
 - Account systems before interest proven.
@@ -62,7 +64,7 @@ Starter `allowed-paths.json` (reconcile against actual scaffolder output before 
     "server/**", "api/**", "database/**"
   ],
   "rootOnlyFiles": [".gitignore", ".env.example", ".nvmrc"],
-  "exemptRootMd": ["README.md", "CLAUDE.md"]
+  "exemptRootMd": ["README.md", "CLAUDE.md", "DEPLOY.md"]
 }
 ```
 

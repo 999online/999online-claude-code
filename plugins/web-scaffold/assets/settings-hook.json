@@ -6,10 +6,30 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/sensitive-file-guard.cjs\""
+          },
+          {
+            "type": "command",
             "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/folder-structure-guard.cjs\""
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/security-pattern-guard.cjs\""
           }
         ],
-        "description": "Enforce CLAUDE.md 'Project Structure (STRICT)' via .claude/allowed-paths.json"
+        "description": "Scaffold guards: block sensitive-file writes, enforce folder contract (allowed-paths.json), flag risky code patterns"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/dependency-audit.cjs\""
+          }
+        ],
+        "description": "npm audit after package.json changes"
       }
     ]
   }

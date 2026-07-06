@@ -10,12 +10,16 @@ When NOT: external users → path A or B. Pure service/integration, no screens �
 
 Ladder rung 1 check. Retool, Appsmith, Airtable, Google AppSheet, Glide cover most internal CRUD/workflow needs with zero repo. No-code fits → recommend it, name the tool, stop — no scaffold. Scaffold only when workflow needs custom logic, custom UI, or integration a no-code tool can't express.
 
+## Layout — monorepo (default), same as path B
+
+Custom build uses path B's **Turborepo monorepo**: `apps/web` + `packages/db`, with `apps/api` (Hono on Workers) only when the tool needs a shared backend beyond Next route handlers — most internal tools don't, so `apps/api` is optional here. Record the choice in ADR.
+
 ## Layers (custom build; first option = default)
 
 | Layer | Preferred options |
 |---|---|
-| Framework | Next.js, SvelteKit |
-| Data | Existing spreadsheet/Airtable via API, Cloudflare D1, CSV import |
+| Frontend framework | Next.js, SvelteKit |
+| Data | Existing spreadsheet/Airtable via API, Cloudflare D1 (via Drizzle in `packages/db`), CSV import |
 | Auth | Cloudflare Access, Google/Microsoft SSO — tool must not be public |
 | Deployment | Cloudflare Workers/Pages, Vercel, Railway, Render |
 
@@ -28,30 +32,25 @@ Ladder rung 1 check. Retool, Appsmith, Airtable, Google AppSheet, Glide cover mo
 
 ## Scaffolder commands (non-interactive)
 
+Same as path B — `create-next-app` into `apps/web`, monorepo glue + `packages/db`. Add `apps/api` (Hono) only if a shared backend is needed:
 ```bash
-npx create-next-app@latest <dir> --ts --app --tailwind --eslint --src-dir --yes
+npx create-next-app@latest apps/web --ts --app --tailwind --eslint --src-dir --yes
 ```
 
 Flags rejected → scaffolder `--help` first, never interactive.
 
-## Structure contract (Next.js default, src dir)
+## Structure contract (monorepo, same as path B)
 
-Same as path B contract, plus:
-
-| Location | Contains | Never contains |
-|---|---|---|
-| `src/lib/audit.ts` (or equivalent) | Status-history/audit-note helper when decisions flow through tool | — |
-
-Starter `allowed-paths.json`: use path B block.
+Use path B contract and starter `allowed-paths.json`. Internal-tool addition: `apps/web/src/lib/audit.ts` (or equivalent) holds a status-history/audit-note helper when decisions flow through the tool — documented, stubbed only.
 
 ## Scaffold output (stubs only)
 
-1. Same as path B: stub page, health route, `.gitkeep` contract dirs, `.env.example`.
+1. Same as path B: stub `apps/web` page, web health route, `packages/db` schema stub + client, `.gitkeep` contract dirs, `.env.example`. `apps/api` only if ADR calls for a shared backend.
 2. Stub page states "internal tool — SSO required before real data".
 3. Access approach (allowlist or SSO domain restriction) recorded in ADR — not implemented.
 4. README "Next steps" section: SSO/Cloudflare Access, workflow screen, audit trail — from ADR.
 
-Planned integrations → README Next steps, never code. NO login, NO workflow screen, NO audit.ts.
+Planned integrations → README Next steps, never code. NO login, NO workflow screen, NO audit.ts implementation.
 
 ## Verify notes
 

@@ -17,6 +17,8 @@ Logs:           npm run logs
 
 Stack can't be represented by similarly short sequence → confirm extra complexity is required for validation.
 
+Every scaffolded project also ships a root `DEPLOY.md` — the target-specific deploy walkthrough (Cloudflare by default): prereqs (wrangler auth, `wrangler d1 create` for D1 paths), preview + prod deploy, logs, rollback/disable. Monorepo → per-app deploy steps.
+
 ## Minimum repository documentation (README)
 
 1. What the app does.
@@ -37,12 +39,26 @@ Lightest model that fits risk:
 | Model | Use when | Standard |
 |---|---|---|
 | CLI deploy from laptop | Early validation, small team, low risk | Commands documented, repeatable by another builder |
-| Git-based preview deploy | Multiple builders, web apps | Branch/PR produces preview URL |
-| Platform dashboard deploy | No-code/low-code tools | Ownership, access, rollback documented |
+| Git-based preview deploy | Multiple builders, static frontend | Branch/PR produces preview URL — Cloudflare Pages Git integration (below) |
+| Platform dashboard deploy | Dashboard-connected Git deploy, no-code/low-code | Ownership, access, rollback documented — Pages Git integration (below) |
 | Container deploy | Custom runtime, background jobs | Dockerfile/platform config committed |
 | CI/CD pipeline | Promotion candidate, higher risk | Build/test/deploy/rollback automated |
 
 No CI/CD required before first deployment when platform CLI or Git deploy safely produces validation environment.
+
+### Cloudflare Pages Git integration (dashboard, zero-YAML)
+
+Lightest Git-driven deploy for **static frontend output** (path A landing; any static export). No YAML, no repo secrets, no API token — dashboard-managed.
+
+Setup (one-time, Cloudflare dashboard): Workers & Pages → Create → **Pages** tab → **Connect to Git** → pick the GitHub repo → set build (framework preset or None, build command, output dir) → **Save and Deploy**. Build settings per scaffolder: Astro `npm run build` → `dist`; static Next `next build && next export` → `out`; SvelteKit/Vite → per adapter.
+
+After connect: push to production branch auto-deploys; every other branch auto-gets an isolated **Preview** URL (`<branch>.<project>.pages.dev`), production branch untouched. Rollback = re-deploy a prior deployment from the dashboard Deployments tab.
+
+**Static output only** — NOT for Next-on-Workers via `@opennextjs/cloudflare` (path B/C default). Contrast `web-deploy-ci`: that uses GitHub Actions + wrangler + repo secrets; Git integration needs none. Pick Git integration first for path A; escalate to Actions only when CI checks must gate deploys.
+
+### CI/CD promotion (opt-in)
+
+Promoting past validation → automated deploy: run `web-deploy-ci`. Copies bundled GitHub Actions templates (`ci.yml` PR checks + `deploy-web.yml` Cloudflare deploy on push, 3× retry on transient API errors) into the project, wiring the existing `check` + `deploy:prod` npm scripts. Requires two repo secrets in a `production` environment: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` (Vercel/Netlify swap documented by the skill). Not emitted by default — this is the promotion step, not the first-deploy path.
 
 ## Environment model
 

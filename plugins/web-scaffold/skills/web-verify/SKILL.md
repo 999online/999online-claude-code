@@ -27,21 +27,27 @@ Audit each against repo evidence per decision-standard.md evidence column. Concr
 ## 3. Deployment baseline
 
 - All 10 README minimum-documentation items present.
-- Command shape scripts present (`dev`, `check`, `deploy`, `deploy:prod`, `logs`).
+- `DEPLOY.md` present at project root, covers deploy + rollback for the chosen target.
+- Command shape scripts present (`dev`, `check`, `deploy`, `deploy:prod`, `logs`). Monorepo → root scripts fan out via turbo.
 - Observability: ADR names logs + analytics + feedback channel.
 
 ## 4. Structure contract
 
 - `.claude/allowed-paths.json` + `.claude/settings.json` parse as JSON.
-- Guard functional — feed forbidden path via stdin, expect exit 0 + stdout JSON with `"permissionDecision":"deny"`:
+- All 4 hooks present in `.claude/hooks/`: `folder-structure-guard.cjs`, `sensitive-file-guard.cjs`, `security-pattern-guard.cjs`, `dependency-audit.cjs`. No `auto-commit`. Each parses (`node --check`).
+- Folder guard functional — feed forbidden path via stdin, expect exit 0 + stdout JSON with `"permissionDecision":"deny"`:
   ```bash
   echo '{"tool_input":{"file_path":"<repo>/[first forbiddenGlob match]"},"cwd":"<repo>"}' | node "<repo>/.claude/hooks/folder-structure-guard.cjs"
+  ```
+- Sensitive-file guard functional — feed a `.env` path, expect `"permissionDecision":"deny"`:
+  ```bash
+  echo '{"tool_input":{"file_path":"<repo>/.env"}}' | node "<repo>/.claude/hooks/sensitive-file-guard.cjs"
   ```
 - Actual tree matches CLAUDE.md structure table — no dirs outside contract, no forbidden dirs present.
 
 ## 5. Path-specific structural checks
 
-Run "Verify notes" from project's golden-path doc `${CLAUDE_PLUGIN_ROOT}/references/golden-paths/path-<X>.md` (A: stub page present, no form/analytics code; B/C: stub page + health route present, no auth/DB code; E: `GET /health` responds locally, no feature endpoints). Feature code beyond stubs = scope-creep fail.
+Run "Verify notes" from project's golden-path doc `${CLAUDE_PLUGIN_ROOT}/references/golden-paths/path-<X>.md` (A: stub page present, no form/analytics code; B/C: monorepo present — `apps/web`, `packages/db`, root `turbo.json` + workspaces (`apps/api` unless collapsed per ADR); stub web page + web health route + api `GET /health` present; empty Drizzle schema, no auth/CRUD; E: `GET /health` responds locally, no feature endpoints). Feature code beyond stubs = scope-creep fail.
 
 Checks needing external accounts (real deploy) → don't fake: mark "pending — needs <account>", list as user follow-up.
 

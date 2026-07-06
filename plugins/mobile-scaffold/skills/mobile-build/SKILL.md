@@ -1,59 +1,61 @@
 ---
 name: mobile-build
-description: Scaffold Expo mobile project from approved Architecture Decision Record — run create-expo-app, stub code only (zero feature implementation), optional Hono Workers backend stub, write README/ADR/CLAUDE.md, install structure-guard hook. Use after mobile-decide approval, or standalone when user names stack + distribution mode explicitly. Never without an ADR or explicit stack decision.
+description: Scaffold the Expo mobile repo from an approved ADR — run create-expo-app, wire state (zustand small / RTK large), FCM notification stub, base API client, stub code only (zero feature code), write docs + .claude contract, git init; then delegate the backend/web-be repo to mobile-service-scaffold. Use after mobile-decide approval, or standalone when user names profile + stack explicitly. Never without an ADR.
 ---
 
 # mobile-build
 
-Input: approved ADR. Output: scaffolded Expo project directory (stubs only), git-initialized, structure contract enforced. Feature work happens later inside generated project — never here.
+Input: approved ADR (covers the whole profile). Output: the `<slug>-mobile` Expo repo (stubs only, git-initialized, structure enforced), then the sibling backend/web-be repo via `mobile-service-scaffold`. Feature work happens later inside generated repos — never here.
 
 No ADR and no explicit user stack decision → stop, run `mobile-decide` first.
 
-Read `${CLAUDE_PLUGIN_ROOT}/references/golden-paths/path-f-expo.md`, `${CLAUDE_PLUGIN_ROOT}/references/deployment.md`, `${CLAUDE_PLUGIN_ROOT}/references/data-security.md`.
+Read `${CLAUDE_PLUGIN_ROOT}/references/profiles.md`, `${CLAUDE_PLUGIN_ROOT}/references/golden-paths/path-f-expo.md`, `${CLAUDE_PLUGIN_ROOT}/references/deployment.md`, `${CLAUDE_PLUGIN_ROOT}/references/data-security.md`.
 
 ## Ground rules
 
-- **Official scaffolder is ground truth.** `app.json`, `tsconfig.json`, eslint config, `expo-env.d.ts` come from `create-expo-app`, never hand-written from memory.
-- Scaffolder commands: exact non-interactive invocations from golden-path doc. Flags rejected → run `--help`, adapt. Never launch interactive mode.
-- **Dependency rule:** Expo/RN-coupled packages (`expo-*`, `react-native-*`) via `npx expo install <pkg>` — SDK-matched version. Never `npm install <pkg>@latest` for these. Pure-JS deps: `npm install <pkg>@latest`. Never hand-write version numbers into package.json.
-- **Never run `npx expo prebuild` or `npx expo run:ios|android`** — project stays managed workflow; `ios/`/`android/` are forbidden by structure contract.
-- Platform/deploy wiring only (e.g. Expo web export → wrangler assets, EAS config — needed by npm scripts): current official docs via context7 MCP tools when available, else WebSearch. Both unavailable → scaffolder defaults only, note gap in final report. Feature libraries (backend client, auth SDK, analytics) NOT installed — they go in README Next steps.
-- Scaffolder or npm install fails (network, registry) → stop, report exact error. Never hand-write fake project skeleton as fallback.
-- **Anchor every target-dir command.** cwd drifts across Bash calls — run in-project commands as `(cd <target> && cmd)` subshell or with absolute paths. Never `cd` once and trust it later.
+- **Official scaffolder is ground truth.** `app.json`, `tsconfig.json`, eslint config, `expo-env.d.ts` come from `create-expo-app`, never hand-written.
+- Scaffolder commands: exact non-interactive invocations from golden path. Flags rejected → `--help`, adapt. Never interactive.
+- **Dependency rule:** Expo/RN-coupled (`expo-*`, `react-native-*`, `expo-notifications`) via `npx expo install <pkg>` — SDK-matched. Pure-JS (`zustand`, `@reduxjs/toolkit`, `react-redux`) via `npm install <pkg>@latest`. Never hand-write versions.
+- **Never `npx expo prebuild` / `expo run:ios|android`** — managed workflow; `ios/`/`android/` forbidden.
+- Platform/deploy wiring (Expo web → Cloudflare Pages, EAS config, FCM setup): current docs via context7 MCP, else WebSearch. Both unavailable → scaffolder defaults, note gap. Feature libraries (auth SDK, analytics, real API endpoints) NOT installed → README Next steps.
+- Scaffolder/npm fails (network, registry) → stop, report exact error. Never hand-write a fake skeleton.
+- **Anchor every target-dir command.** cwd drifts — run in-repo commands as `(cd <dir> && cmd)` or absolute paths.
+- **Separate repos.** Backend is NOT a subdir — it is a sibling repo built by `mobile-service-scaffold`. No `server/` here.
 
 ## Steps
 
-1. **Target dir.** Confirm target from ADR/conversation. Dir exists non-empty → stop, ask: new subdir or abort. Never scaffold over existing files.
-2. **Scaffold.** `npx create-expo-app@latest <dir> --template default --yes`. Then `(cd <dir> && npm run reset-project)` (don't keep example files; delete `app-example/`). Script absent → move example screens out manually, keep clean `app/` with one index route. Inspect produced tree — layout varies by template version; contract reconciliation (step 8) depends on actual tree.
-3. **Backend (only when ADR names one).** `npm create hono@latest server -- --template cloudflare-workers --install --pm npm`. `GET /health` returning `{ok: true, version}` — only route. No D1 wiring, no feature endpoints. Backend secrets: `server/.dev.vars.example` committed, real `.dev.vars` gitignored.
-4. **Stubs only.** Generate golden-path doc's "Scaffold output (stubs only)" list exactly — `app/index.tsx` stub screen (app name + hypothesis from ADR), contract dirs with `.gitkeep`. Respect Avoid list. NO feature code: no auth, no native-feature code, no API clients, no analytics. Planned integrations from ADR → README Next steps.
-5. **npm scripts.** Command shape from deployment.md, per ADR distribution mode:
-   - Always: `dev` (`expo start`), `check` (typecheck + `expo lint`), `doctor` (`npx expo-doctor`).
-   - Native mode: `deploy` (`eas update --channel preview`), `deploy:prod` (`eas build --profile preview --platform all`), `logs` (`eas update:list --branch preview --non-interactive`).
-   - PWA mode: `deploy` (`expo export --platform web` + wrangler deploy of `dist/` — exact assets wiring from current docs), `deploy:prod` (prod variant), `logs` (`wrangler tail`).
-   - Both mode: ship both sets, suffixed (`deploy:web`).
-   - Backend: `server:dev`, `server:deploy` proxying into `server/`.
-   EAS scripts need one-time `npm i -g eas-cli && eas login && eas init` — do NOT run these; README documents as first-deploy setup.
+1. **Parse + target.** From ADR: profile, repos + names, mobile state lib (zustand/RTK), distribution mode, backend present?. Base slug from project name. Confirm parent dir; sibling repos created under it: `<slug>-mobile` + (`<slug>-backend` | `<slug>-web-be`). Any target dir exists non-empty → stop, ask (new name / abort). Never scaffold over files.
+2. **Scaffold mobile.** `npx create-expo-app@latest <slug>-mobile --template default --yes`; then `(cd <slug>-mobile && npm run reset-project)` (delete `app-example/`). Script absent → move example screens out, keep clean `app/` + one index route. Inspect actual tree (varies by template version).
+3. **State + notifications deps.** small: `npm install zustand`. large: `npm install @reduxjs/toolkit react-redux`. Both: `npx expo install expo-notifications expo-device`.
+4. **Stubs only** (path-f-expo "Scaffold output"):
+   - `app/index.tsx` — stub screen: app name + hypothesis.
+   - `store/` — infra stub: small `store/app-store.ts` (one zustand store, placeholder field+setter); large `store/index.ts` (`configureStore`) + `store/app-slice.ts` + `store/hooks.ts`, `<Provider>` in `app/_layout.tsx`.
+   - `lib/api.ts` — base client: reads `EXPO_PUBLIC_API_URL`, `apiFetch(path)` + `health()`. No domain endpoints.
+   - `lib/notifications.ts` — `expo-notifications` register + get-token + log, permission-gated. No send logic.
+   - `.gitkeep` for empty contract dirs (`components/`, `hooks/`, `constants/`).
+   - NO feature code: no auth, no native-feature code, no domain API, no FCM send. Planned → README Next steps.
+5. **npm scripts** (deployment.md, per distribution mode): always `dev` (`expo start`), `check` (typecheck + `expo lint`), `doctor` (`npx expo-doctor`). Native: `deploy`(`eas update --channel preview`), `deploy:prod`(`eas build --profile preview --platform all`), `logs`(`eas update:list`). PWA: `deploy`(`expo export -p web` + wrangler Pages), `deploy:prod`(prod Pages), `logs`(`wrangler tail`). Both: suffixed. EAS one-time setup documented (not run). PWA + Pages Git-integration deploy model (ADR): deploy happens on push via dashboard — deploy scripts optional manual fallback; DEPLOY.md documents the dashboard flow as primary.
 6. **Docs + env.**
-   - `README.md`: all 10 minimum-documentation items from deployment.md, including device run steps (QR scan), both deploy paths, and pull-a-bad-update rollback. Plus "Next steps" section — planned integrations from ADR (native feature, auth provider, API client, analytics), each one line.
+   - `README.md`: 10 minimum-doc items (deployment.md) incl. device run (QR), both deploy paths, rollback; "Next steps" (ADR integrations); offline statement; note `EXPO_PUBLIC_API_URL` → backend repo URL.
    - `docs/ADR.md`: approved ADR verbatim.
-   - `.env.example`: every required var, placeholder values, each commented — `# EXPO_PUBLIC_ vars are baked into public app bundle — publishable values only, never secrets`. Never real values.
-7. **CLAUDE.md.** Write fresh at project root:
-   - Purpose + hypothesis (from ADR).
-   - Scope + non-goals (platforms, distribution mode, offline stance).
-   - Non-goals hard bound: "Stub-only scaffold — do NOT implement features outside scope. Never add adjacent features for completeness. Feature work = separate tasks inside this repo."
-   - "Project Structure (STRICT)" — per-folder table matching ACTUAL generated tree (contains / never contains).
-   - Forbidden patterns table (from golden-path contract, incl. `ios/`/`android/`).
-   - Commands table.
-   - Known shortcuts + hardening expectation (from ADR).
-   - Pointer: `docs/ADR.md`, `.claude/rules/`.
+   - `.env.example`: `EXPO_PUBLIC_API_URL` + `EXPO_PUBLIC_FIREBASE_*` (public config), each commented `# EXPO_PUBLIC_ baked into public bundle — publishable values only`.
+   - Root docs from `${CLAUDE_PLUGIN_ROOT}/references/output-docs/`: `STANDARDS.md`, `DEPLOY.md`, `PLUGINS-TO-INSTALL.md`, `.mcp.json` (copy from `output-docs/mcp.json`) — substitute `{{...}}` for this repo. PWA + Pages Git-integration model → fill `DEPLOY.md` with the dashboard connect walkthrough (Connect to Git, build cmd `npx expo export -p web`, output dir `dist`, auto-deploy + preview URLs) as primary; wrangler CLI as fallback.
+   - `.gitignore`: ensure `.env*`, `google-services.json`, `GoogleService-Info.plist`, `dist/` ignored.
+7. **CLAUDE.md** at repo root:
+   - Purpose + hypothesis; Scope + non-goals (platforms, distribution mode, offline).
+   - Non-goals hard bound: "Stub-only scaffold — do NOT implement features outside scope. Feature work = separate tasks inside this repo."
+   - "Project Structure (STRICT)" per-folder table matching actual tree (incl. `store/`).
+   - Forbidden patterns table (incl. `ios/`/`android/`/`src/`/`pages/`/`public/`/`server/`).
+   - Commands table; Cross-repo note (`EXPO_PUBLIC_API_URL` → backend repo); Known shortcuts + hardening (ADR).
+   - Pointers: `docs/ADR.md`, `.claude/rules/`.
 8. **Structure guard — LAST, after tree final:**
    - Copy `${CLAUDE_PLUGIN_ROOT}/assets/hooks/folder-structure-guard.cjs` → `.claude/hooks/`.
-   - Copy `${CLAUDE_PLUGIN_ROOT}/assets/rules/*.md` → `.claude/rules/`.
-   - Write `.claude/allowed-paths.json`: start from golden-path doc's starter block, reconcile against actual tree (walk it — every existing dir the project legitimately uses gets a glob; drop `server/**` when no backend; keep forbiddenGlobs from doc).
-   - `.claude/settings.json`: content of `${CLAUDE_PLUGIN_ROOT}/assets/settings-hook.json`. File already exists → deep-merge hooks array, don't clobber.
-9. **Git.** Repo absent → `git init`. Stage all, initial commit `feat: scaffold <name> (path F, mobile-scaffold)`. Announce commit.
+   - Copy mobile rule set from `${CLAUDE_PLUGIN_ROOT}/assets/rules/` → `.claude/rules/`: `structure.md`, `security.md`, `delivery.md`, `state-management.md`, `notifications.md`, `apple-hig.md`, `apple-app-review.md`, `android-core-quality.md`, `android-play-policy.md`.
+   - Write `.claude/allowed-paths.json`: from path-f-expo starter, reconcile against actual tree (+`store/**`; keep forbiddenGlobs incl. `server/**`).
+   - `.claude/settings.json`: content of `${CLAUDE_PLUGIN_ROOT}/assets/settings-hook.json`. Exists → deep-merge hooks, don't clobber.
+9. **Git.** `(cd <slug>-mobile && git init && git add -A && git commit -m "feat: scaffold <slug>-mobile (mobile, <profile>)")`. Announce.
+10. **Delegate service repo.** Backend present → run `mobile-service-scaffold` with: ADR, profile, parent dir, mobile repo's `EXPO_PUBLIC_API_URL` placeholder to reconcile. No backend → skip, note mobile-only-no-server.
 
 ## Output
 
-Report: tree summary, stubs generated, next-step integrations listed, distribution mode + scripts written, files written, doc-currency gaps (context7/WebSearch unavailable), anything deferred to verify.
+Report per repo: tree summary, stubs generated, state lib wired, distribution mode + scripts, docs written, `.claude` contract installed, git commit. Cross-repo `EXPO_PUBLIC_API_URL` link. Doc-currency gaps (context7/WebSearch unavailable). Then service-repo result. Anything deferred to verify.

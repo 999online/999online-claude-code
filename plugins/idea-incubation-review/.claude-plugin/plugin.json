@@ -1,7 +1,7 @@
 {
   "name": "idea-incubation-review",
   "description": "Initial research + viability verdict for a raw idea against 999's internal incubation criteria — fan out three analysts (buildability, market/adoption, business), then score against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09/10 scorecard) with a software-first hard gate. Answers buildable-per-docs? and viable-per-rulebook?, classifies Commercial vs Internal track, lists gaps and missing presenter deliverables. Works with zero setup; a connected Confluence-reader MCP freshens criteria and flags drift.",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "author": {
     "name": "audrueygana-lmph",
     "email": "audruey.gana@legalmatch.com"

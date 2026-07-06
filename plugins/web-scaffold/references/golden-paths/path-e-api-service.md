@@ -67,7 +67,7 @@ Starter `allowed-paths.json` (reconcile against actual tree):
     "public/**", "pages/**", "components/**"
   ],
   "rootOnlyFiles": [".gitignore", ".env.example", ".nvmrc", ".dev.vars.example"],
-  "exemptRootMd": ["README.md", "CLAUDE.md"]
+  "exemptRootMd": ["README.md", "CLAUDE.md", "DEPLOY.md"]
 }
 ```
 

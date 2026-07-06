@@ -1,7 +1,7 @@
 {
   "name": "mobile-scaffold",
-  "description": "Agentic mobile app scaffolding on incubation architecture standards (Path F) — discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo stack, approve ADR, scaffold via create-expo-app (stubs only, zero feature code — feature work happens inside generated project), verify structurally against decision standard. Strict structure contract enforced in generated projects.",
-  "version": "0.3.0",
+  "description": "Agentic mobile app scaffolding on incubation architecture standards — pick a profile (target mobile-only/+web × size small/large), approve an ADR, scaffold separate git repos (Expo mobile + backend: Hono+Workers+D1 small / NestJS+Postgres/AWS large, plus a react-native-web app when +web) via official scaffolders (stubs only, zero feature code — feature work happens inside generated repos), verify each. Expo + Cloudflare highest priority; Firebase for notifications. Strict structure contract enforced per repo.",
+  "version": "0.6.1",
   "author": {
     "name": "audrueygana-lmph",
     "email": "audruey.gana@legalmatch.com"
@@ -12,6 +12,8 @@
     "./skills/mobile-discover",
     "./skills/mobile-decide",
     "./skills/mobile-build",
-    "./skills/mobile-verify"
+    "./skills/mobile-service-scaffold",
+    "./skills/mobile-verify",
+    "./skills/mobile-deploy-ci"
   ]
 }

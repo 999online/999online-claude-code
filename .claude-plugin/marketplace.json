@@ -3,26 +3,26 @@
   "owner": { "name": "999online" },
   "metadata": {
     "description": "Claude Code plugin marketplace for 999online developers.",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "plugins": [
     {
       "name": "web-scaffold",
       "source": "./plugins/web-scaffold/",
-      "description": "Agentic web project scaffolding on incubation architecture standards — discover idea, pick lightest credible golden path (landing / full-stack / internal tool / API service), approve ADR, scaffold via official scaffolders (stubs only, zero feature code — feature work happens inside generated project), verify structurally against decision standard. Strict structure contract enforced in generated projects.",
-      "version": "0.2.0"
+      "description": "Agentic web project scaffolding on incubation architecture standards — discover idea, pick lightest credible golden path (landing / full-stack / internal tool / API service), approve ADR, scaffold via official scaffolders (stubs only, zero feature code — feature work happens inside generated project), verify structurally against decision standard. Cloudflare-default; full-stack paths scaffold a Turborepo monorepo (apps/web + apps/api + packages/db). Strict structure contract + guard hooks enforced in generated projects.",
+      "version": "0.5.1"
     },
     {
       "name": "mobile-scaffold",
       "source": "./plugins/mobile-scaffold/",
-      "description": "Agentic mobile app scaffolding on incubation architecture standards (Path F) — discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo stack, approve ADR, scaffold via create-expo-app (stubs only, zero feature code — feature work happens inside generated project), verify structurally against decision standard. Strict structure contract enforced in generated projects.",
-      "version": "0.3.0"
+      "description": "Agentic mobile app scaffolding on incubation architecture standards — pick a profile (target mobile-only/+web × size small/large), approve an ADR, scaffold separate git repos (Expo mobile + backend: Hono+Workers+D1 small / NestJS+Postgres/AWS large, plus a react-native-web app when +web) via official scaffolders (stubs only, zero feature code — feature work happens inside generated repos), verify each. Expo + Cloudflare highest priority; Firebase for notifications. Strict structure contract enforced per repo.",
+      "version": "0.6.1"
     },
     {
       "name": "idea-incubation-review",
       "source": "./plugins/idea-incubation-review/",
       "description": "Initial research + viability verdict for a raw idea against 999's internal incubation criteria — fan out three analysts (buildability, market/adoption, business), then score against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09/10 scorecard) with a software-first hard gate. Answers buildable-per-docs? and viable-per-rulebook?, classifies Commercial vs Internal track, lists gaps and missing presenter deliverables. Works with zero setup; a connected Confluence-reader MCP freshens criteria and flags drift.",
-      "version": "0.1.0"
+      "version": "0.2.2"
     }
   ]
 }

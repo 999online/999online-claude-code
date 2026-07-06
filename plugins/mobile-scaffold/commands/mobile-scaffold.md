@@ -1,46 +1,49 @@
 ---
-description: Scaffold a mobile app the agentic way — discover idea, pick distribution mode (PWA / native / both) and lightest credible Expo architecture, approve ADR, scaffold via create-expo-app (stubs only, zero feature code), verify against decision standard. Full pipeline, one command.
+description: Scaffold a mobile app the agentic way — discover idea, pick profile (target mobile-only/+web × size small/large), approve ADR, scaffold sibling repos (Expo mobile + Cloudflare/NestJS backend, RN-web when +web) via official scaffolders (stubs only, zero feature code), verify each. Expo + Cloudflare highest priority. Full pipeline, one command.
 argument-hint: [one-line idea (optional)]
 allowed-tools: AskUserQuestion, Skill, Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch
 ---
 
 # /mobile-scaffold
 
-Full pipeline: discover → decide → build → verify. Idea → Expo scaffold: architecture decided, structure enforced, `.claude` assets in place, stub code only. Feature work happens inside generated project — never in this pipeline.
+Full pipeline: discover → decide → build → service-scaffold → verify. Idea → separate git repos: Expo `<slug>-mobile` + backend (`<slug>-backend` Hono+D1 / NestJS+Postgres) or `<slug>-web-be` (apps/api + apps/web RN-web). Architecture decided, structure enforced per repo, `.claude` assets in place, stub code only. Feature work happens inside generated repos — never in this pipeline.
+
+**Priority:** Expo (only mobile framework) + Cloudflare (small = pure Cloudflare) highest. Large (NestJS/Postgres/AWS) = ADR-justified escalation. Firebase = notifications only.
 
 `$ARGUMENTS` = optional one-line idea. Missing/empty → fine, intake asks. Present → seed intake, skip answered questions.
 
 ## Resume check first
 
-Current dir (or named target) already has `docs/ADR.md` → prior run. Read it, summarize, AskUserQuestion: resume at build / resume at verify / start over / abort. Skip re-interview on resume.
+Sibling repos already exist near target (`<slug>-mobile/docs/ADR.md`, `<slug>-backend/`, `<slug>-web-be/`) → prior run. Read the ADR, summarize, AskUserQuestion: resume at build (missing repo) / resume at verify / start over / abort. Skip re-interview on resume. Filesystem is the checkpoint — no state files.
 
 ## Pipeline
 
-1. **Discover** — run `mobile-discover` skill. Ends with intake summary. Escalation trigger + user chose stop → end here.
-2. **Decide** — run `mobile-decide` skill. Mobile ladder → distribution mode → Path F stack → ADR → user approval. Rung-1 outcome (no-code tool suffices), rung-2 outcome (desk web app → `/web-scaffold`), Flutter insisted, or abort → end here, no files written.
-3. **Build** — run `mobile-build` skill with approved ADR.
-4. **Verify** — run `mobile-verify` skill on built project.
+1. **Discover** — run `mobile-discover`. Ends with intake summary (incl. target + size axes). Escalation trigger + user chose stop → end here.
+2. **Decide** — run `mobile-decide`. Ladders → profile select → distribution mode → matrix defaults + deviations → ADR → user approval. Rung-1 (no-code tool), rung-2 (desk web → `/web-scaffold`), Flutter insisted, or abort → end here, no files written.
+3. **Build (mobile)** — run `mobile-build` with approved ADR. Emits `<slug>-mobile`, git-initialized.
+4. **Service-scaffold** — `mobile-build` delegates to `mobile-service-scaffold` (unless ADR names no backend). Emits `<slug>-backend` or `<slug>-web-be`, git-initialized.
+5. **Verify** — run `mobile-verify` on each emitted repo.
 
-Each stage consumes prior stage's output from conversation. No state files beyond project itself — filesystem is the checkpoint.
+Each stage consumes prior output from conversation.
 
 ## Final report
 
 After verify, single summary:
 
-- Verdict from verify report.
-- Local run: `npm run dev` — scan QR with Expo Go on phone.
-- Distribution, per ADR mode:
-  - PWA: `npm run deploy` → Cloudflare URL; remaining account setup (wrangler login).
-  - Native: `npm run deploy` (EAS Update) / `npm run deploy:prod` (internal-distribution build); remaining setup: `npm i -g eas-cli`, `eas login`, `eas init`.
-- Env vars to fill (from `.env.example` — all `EXPO_PUBLIC_`, all public).
-- Escalations pending decision owner, if any — distribution blocked until cleared (incl. Apple $99/yr / Play $25 account purchases, trigger 9).
-- Next steps: planned integrations from generated README Next steps section — feature work happens inside project, guided by its CLAUDE.md + ADR.
-- ADR location: `docs/ADR.md`.
-- Cost note: EAS free tier + expected tier + shutdown path (from ADR).
-- Delivery framing: "Stub scaffold on a phone today via Expo Go. Deploys as-is — `npm run deploy` after account login. Feature work follows inside project."
+- Verdict from verify report (per repo + profile checks).
+- Repos emitted + paths; each own git repo.
+- Local run: mobile `npm run dev` (QR scan, Expo Go); backend `npm run dev` (+ `curl /health`).
+- **Cross-repo:** set mobile `EXPO_PUBLIC_API_URL` = backend base URL (Hono `:8787` / Nest `:3000` / deployed URL).
+- Distribution per ADR mode: PWA → Cloudflare Pages URL; native → EAS (`npm run deploy`/`deploy:prod`) + one-time `npm i -g eas-cli && eas login && eas init`. Backend: Hono `wrangler deploy`; NestJS → documented AWS.
+- Env vars to fill (per repo `.env.example`/`.dev.vars.example`); mobile `EXPO_PUBLIC_` all public; Firebase service-account = backend secret only.
+- Escalations pending decision owner (Apple $99 / Play $25 trigger 9; AWS trigger 7 for large) — distribution blocked until cleared.
+- Next steps: planned integrations from each README Next steps — feature work inside repos, guided by their CLAUDE.md + ADR.
+- ADR location: each repo's `docs/ADR.md`.
+- Cost note: Cloudflare/EAS free tiers + AWS metered (large) + shutdown path (ADR).
+- Promote to automated deploy? Later run `mobile-deploy-ci` per Cloudflare-targeted repo (Pages / Workers; opt-in; NestJS/AWS + native declines).
 
 ## Failure handling
 
-- Stage stops (incomplete intake, aborted ADR, scaffolder/network failure, build gate fail after 3 fixes) → report exact state + what user must do. Never fake progress past a failed stage.
-- Network/registry down mid-build → project may be partial; say which steps completed, resume path via this command.
-- EAS build queue/failure → project still runs locally via Expo Go; report which distribution steps remain.
+- Stage stops (incomplete intake, aborted ADR, scaffolder/network fail, build gate fail after 3 fixes) → report exact state + what user must do. Never fake progress.
+- One repo scaffolds, sibling fails → say which completed; resume via this command.
+- Network/registry down mid-build → repo may be partial; say which steps completed, resume path.
