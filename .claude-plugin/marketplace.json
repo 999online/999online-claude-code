@@ -3,14 +3,14 @@
   "owner": { "name": "999online" },
   "metadata": {
     "description": "Claude Code plugin marketplace for 999online developers.",
-    "version": "0.1.1"
+    "version": "0.1.2"
   },
   "plugins": [
     {
       "name": "web-scaffold",
       "source": "./plugins/web-scaffold/",
       "description": "Agentic web project scaffolding on incubation architecture standards — discover idea, pick lightest credible golden path (landing / full-stack / internal tool / API service), approve ADR, scaffold via official scaffolders (stubs only, zero feature code — feature work happens inside generated project), verify structurally against decision standard. Cloudflare-default; full-stack paths scaffold a Turborepo monorepo (apps/web + apps/api + packages/db). Strict structure contract + guard hooks enforced in generated projects.",
-      "version": "0.5.1"
+      "version": "0.5.2"
     },
     {
       "name": "mobile-scaffold",

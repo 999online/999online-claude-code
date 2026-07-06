@@ -28,7 +28,7 @@ Bottom-up, stop at first rung that tests hypothesis honestly:
 
 Read chosen golden-path doc. Default = first option per layer. Override only for user constraint (existing account, team skill, stated preference) — record override reason in ADR. Respect path's Avoid list; user asks for avoided thing → push back once with doctrine reason, then follow user decision and record it as known risk.
 
-Layout: B/C default to the **monorepo** (`apps/web` + `apps/api` + `packages/db`, Turborepo); collapse `apps/api` only if the tool is genuinely single-surface. A/E stay single-package. Cloudflare is the house default deploy target (Workers/Pages/D1/R2/KV/Access); record the ADR `Layout` field.
+Layout: B/C default to the **monorepo** (`apps/web` + `apps/api` + `packages/db`, Turborepo). Path C always keeps `apps/api` (Hono). Path B may collapse `apps/api` only if the app is genuinely single-surface. A/E stay single-package. Cloudflare is the house default deploy target (Workers/Pages/D1/R2/KV/Access); record the ADR `Layout` field.
 
 **Deploy model (path A static):** default **Cloudflare Pages Git integration** — dashboard-connected, zero-YAML, auto per-branch preview URLs, no repo secrets (`${CLAUDE_PLUGIN_ROOT}/references/deployment.md`). Alternative: wrangler CLI (`npm run deploy`). Record chosen deploy model in ADR. Git-integration ⇒ `web-deploy-ci` (Actions) not needed for path A. Not for B/C (Next-on-Workers via `@opennextjs/cloudflare`).
 

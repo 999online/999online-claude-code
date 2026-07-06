@@ -12,13 +12,14 @@ Ladder rung 1 check. Retool, Appsmith, Airtable, Google AppSheet, Glide cover mo
 
 ## Layout — monorepo (default), same as path B
 
-Custom build uses path B's **Turborepo monorepo**: `apps/web` + `packages/db`, with `apps/api` (Hono on Workers) only when the tool needs a shared backend beyond Next route handlers — most internal tools don't, so `apps/api` is optional here. Record the choice in ADR.
+Custom build uses path B's **Turborepo monorepo**: `apps/web` + `apps/api` (Hono on Workers) + `packages/db` — same three workspaces as path B. `apps/api` is **required** for path C: internal tools route through a shared Hono backend, not ad-hoc Next route handlers. Record the stack in ADR.
 
 ## Layers (custom build; first option = default)
 
 | Layer | Preferred options |
 |---|---|
 | Frontend framework | Next.js, SvelteKit |
+| API framework | Hono (on Workers) |
 | Data | Existing spreadsheet/Airtable via API, Cloudflare D1 (via Drizzle in `packages/db`), CSV import |
 | Auth | Cloudflare Access, Google/Microsoft SSO — tool must not be public |
 | Deployment | Cloudflare Workers/Pages, Vercel, Railway, Render |
@@ -32,9 +33,10 @@ Custom build uses path B's **Turborepo monorepo**: `apps/web` + `packages/db`, w
 
 ## Scaffolder commands (non-interactive)
 
-Same as path B — `create-next-app` into `apps/web`, monorepo glue + `packages/db`. Add `apps/api` (Hono) only if a shared backend is needed:
+Same as path B — `create-next-app` into `apps/web`, `create hono` into `apps/api`, monorepo glue + `packages/db`:
 ```bash
 npx create-next-app@latest apps/web --ts --app --tailwind --eslint --src-dir --yes
+npm create hono@latest apps/api -- --template cloudflare-workers --install --pm npm
 ```
 
 Flags rejected → scaffolder `--help` first, never interactive.
@@ -45,7 +47,7 @@ Use path B contract and starter `allowed-paths.json`. Internal-tool addition: `a
 
 ## Scaffold output (stubs only)
 
-1. Same as path B: stub `apps/web` page, web health route, `packages/db` schema stub + client, `.gitkeep` contract dirs, `.env.example`. `apps/api` only if ADR calls for a shared backend.
+1. Same as path B: stub `apps/web` page, web health route, `apps/api` Hono app mounting `GET /health` only, `packages/db` schema stub + client, `.gitkeep` contract dirs, `.env.example`.
 2. Stub page states "internal tool — SSO required before real data".
 3. Access approach (allowlist or SSO domain restriction) recorded in ADR — not implemented.
 4. README "Next steps" section: SSO/Cloudflare Access, workflow screen, audit trail — from ADR.
