@@ -1,0 +1,16 @@
+{
+  "name": "idea-scout-currentsapi-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Zero-dependency MCP server wrapping the CurrentsAPI news API (latest news + search + save-config token).",
+  "bin": {
+    "idea-scout-currentsapi-mcp": "./server.js"
+  },
+  "scripts": {
+    "selftest": "node server.js --selftest"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

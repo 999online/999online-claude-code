@@ -23,6 +23,12 @@
       "source": "./plugins/idea-incubation-review/",
       "description": "Initial research + viability verdict for a raw idea against 999's internal incubation criteria — fan out three analysts (buildability, market/adoption, business), then score against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09/10 scorecard) with a software-first hard gate. Answers buildable-per-docs? and viable-per-rulebook?, classifies Commercial vs Internal track, lists gaps and missing presenter deliverables. Works with zero setup; a connected Confluence-reader MCP freshens criteria and flags drift.",
       "version": "0.2.2"
+    },
+    {
+      "name": "idea-scout",
+      "source": "./plugins/idea-scout/",
+      "description": "Generate sellable software ideas grounded in real web evidence, then loop each through the idea-incubation-review gate until 5 pass READY. Fans out four generation analysts (trend, demand, whitespace, monetization) that cite sources, dedupes against a persistent ledger of every idea ever proposed, and auto-refines a REFINE candidate once. Every proposed idea carries source URLs for why it was picked. Optional CurrentsAPI news MCP (set up via /init-mcp) grounds what's selling today; falls back to WebSearch. Requires the idea-incubation-review plugin installed. Use when you want fresh, market-validated software ideas rather than judging one idea you already have.",
+      "version": "0.1.0"
     }
   ]
 }

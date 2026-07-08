@@ -1,0 +1,26 @@
+{
+  "name": "idea-scout",
+  "description": "Generate sellable software ideas grounded in real web evidence, then loop each through the idea-incubation-review gate until 5 pass READY. Fans out four generation analysts (trend, demand, whitespace, monetization) that cite sources, dedupes against a persistent ledger of every idea ever proposed, and auto-refines a REFINE candidate once. Every proposed idea carries source URLs for why it was picked. Optional CurrentsAPI news MCP (set up via /init-mcp) grounds what's selling today; falls back to WebSearch. Requires the idea-incubation-review plugin installed. Use when you want fresh, market-validated software ideas rather than judging one idea you already have.",
+  "version": "0.1.0",
+  "author": {
+    "name": "audrueygana-lmph",
+    "email": "audruey.gana@legalmatch.com"
+  },
+  "repository": "https://github.com/999online/999online-claude-code",
+  "commands": [
+    "./commands/scout-ideas.md",
+    "./commands/init-mcp.md"
+  ],
+  "agents": [
+    "./agents/sellable-trend-analyst.md",
+    "./agents/sellable-demand-analyst.md",
+    "./agents/sellable-whitespace-analyst.md",
+    "./agents/sellable-monetization-analyst.md"
+  ],
+  "skills": [
+    "./skills/idea-scout-loop",
+    "./skills/idea-generate",
+    "./skills/idea-ledger"
+  ],
+  "mcpServers": "./.mcp.json"
+}

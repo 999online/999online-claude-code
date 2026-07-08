@@ -11,6 +11,8 @@ Never hardcode API keys, tokens, URLs, account IDs, or any sensitive value in sk
 ## 3. Do not code MCP servers
 This marketplace ships plugins (skills, commands, agents, hooks) — not MCP server implementations. When a plugin needs an MCP, write the prompt the developer pastes into their own model to build the MCP. Display that prompt to the developer; do not implement the MCP here.
 
+**Exception — bundled zero-dependency stdio wrapper.** A plugin MAY bundle a single-file MCP server (`mcp/server.js`, Node ≥18, global `fetch`, no npm deps, no `node_modules`, no build step) that thinly wraps one external REST API. Launch it from a plugin-root `.mcp.json` (`node ${CLAUDE_PLUGIN_ROOT}/mcp/server.js`) referenced by `plugin.json` `"mcpServers": "./.mcp.json"`. Route any secret through a `*_save_config` tool that writes a `0600` home-dir file (never a repo `.env`, never committed), read lazily so it applies without restart. This is the ONLY sanctioned in-repo server — anything with dependencies, a build, or non-trivial logic still follows the default above (ship a paste-able build prompt). Pattern: `plugins/morelevels`, `plugins/idea-scout`.
+
 ## 4. Plugins must be reusable
 Write for general scenarios, not the author's setup. No hardcoded paths, org names, team names, or personal assumptions. Parameterize via `$ARGUMENTS`, MCP config the developer supplies, or values the user provides at runtime. A plugin only the author can use is a bug.
 

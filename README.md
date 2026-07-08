@@ -114,6 +114,20 @@ Agents: `incubation-architecture-analyst` (opus), `incubation-market-analyst` (s
 
 Needs: network (WebSearch/WebFetch). Works with zero setup — bundles distilled 999 criteria. Optional: connect a Confluence-reader MCP (tools `confluence_*`) to freshen criteria from the live PIH space and flag snapshot drift — see the plugin's `references/confluence-mcp-setup.md`.
 
+### idea-scout
+
+Finds **sellable** software ideas — generation, not judging. Runs one command, loops until **5 ideas that would actually sell** all pass the `idea-incubation-review` gate (verdict READY). Each round: four market analysts dig in parallel (trend / demand / whitespace / monetization, each citing sources), their briefs synthesize into software-first candidates, every candidate is deduped against a persistent ledger of past proposals, then gated through `/incubation-review`. READY → kept; REFINE → auto-refined once, re-gated; RETHINK → logged, dropped. No idea proposed twice; every kept idea carries the source URLs for **why** it was picked. Bounded (≤5 rounds) so it never spins.
+
+```
+/plugin install idea-scout@999online
+/scout-ideas [optional focus — e.g. "b2b saas"]
+/init-mcp <api-token>          # optional CurrentsAPI news grounding
+```
+
+Agents: `sellable-trend-analyst`, `sellable-demand-analyst`, `sellable-whitespace-analyst`, `sellable-monetization-analyst` (all sonnet). Skills (also standalone): `idea-scout-loop` (orchestrate the gate loop to 5), `idea-generate` (fan out analysts → cited candidates), `idea-ledger` (persistent dedup ledger at `docs/proposed-ideas/LEDGER.md`).
+
+Needs: **idea-incubation-review installed** (it's the gate — `/scout-ideas` stops with an install line if missing), network (WebSearch/WebFetch), Node ≥18 (for the bundled MCP). Token-heavy: each candidate runs a full incubation-review. Optional: `/init-mcp <token>` wires a **bundled, zero-dependency CurrentsAPI news MCP** (`mcp/server.js`, morelevels pattern) for fresh "what's selling today" grounding — key saved to `~/.currentsapi-scout.json` (mode 0600, never committed), read lazily so it works immediately, **no restart**; free tier ~1,000 req/day; no token → prints signup steps. Falls back to WebSearch when absent.
+
 ## Layout
 
 ```
