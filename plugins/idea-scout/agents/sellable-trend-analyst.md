@@ -14,12 +14,14 @@ Find rising demand a software product could ride *right now*. Caller passes `foc
 
 1. If a `NEWS.md` exists in `runs/<run>/`, read it first — it's fresh CurrentsAPI headlines. Use it as leads, still verify with WebSearch/WebFetch.
 2. Search current signals (bias to the last ~6 months): fast-growing categories, notable funding rounds, product launches, platform/regulatory shifts opening a gap, surging search or community interest.
+2b. **Philippines lens (standing).** Also scan PH-specific signals: local startup funding, PH product launches, platform/regulatory shifts (BSP e-money/fintech, DTI/e-commerce, data-privacy), surging PH search/community interest, OFW/BPO/SME dynamics. Cover PH even when `focus` names no geography.
 3. Keep only trends with a **software wedge** — something a small team could build and sell, no headcount or physical ops.
 4. Discard hype with no buyer behind it. A trend nobody pays for is not a trend for us.
 
 ## Write `docs/proposed-ideas/runs/<run>/BRIEF-trend.md`
 
-- **Rising now** — 4–6 trends, each: what's moving, the signal (number/event), why it's a software opening, dated.
+- **Rising now** — 4–6 trends, each: what's moving, the signal (number/event), why it's a software opening, dated. Tag market: `[global]` / `[PH]` / `[both]`.
+- **Philippines rising** — 2–3 PH-specific trends (local signal, dated). Empty only if genuinely nothing verifiable — say so, don't skip silently.
 - **Timing** — why now and not two years ago.
 - **Watch-outs** — trends that look hot but are fads or already saturated.
 - **## Sources** — `<url — what it backs>`, one per load-bearing claim.

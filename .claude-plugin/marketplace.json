@@ -3,7 +3,7 @@
   "owner": { "name": "999online" },
   "metadata": {
     "description": "Claude Code plugin marketplace for 999online developers.",
-    "version": "0.1.2"
+    "version": "0.1.4"
   },
   "plugins": [
     {
@@ -27,7 +27,13 @@
     {
       "name": "idea-scout",
       "source": "./plugins/idea-scout/",
-      "description": "Generate sellable software ideas grounded in real web evidence, then loop each through the idea-incubation-review gate until 5 pass READY. Fans out four generation analysts (trend, demand, whitespace, monetization) that cite sources, dedupes against a persistent ledger of every idea ever proposed, and auto-refines a REFINE candidate once. Every proposed idea carries source URLs for why it was picked. Optional CurrentsAPI news MCP (set up via /init-mcp) grounds what's selling today; falls back to WebSearch. Requires the idea-incubation-review plugin installed. Use when you want fresh, market-validated software ideas rather than judging one idea you already have.",
+      "description": "Generate sellable software ideas grounded in real web evidence, then loop each through the idea-incubation-review gate until 5 pass READY. Fans out four generation analysts (trend, demand, whitespace, monetization) that cite sources and run a standing Philippines-market lens alongside the global scan, dedupes against a persistent ledger of every idea ever proposed, and auto-refines a REFINE candidate once. Every proposed idea carries source URLs for why it was picked and a target-market tag (global/Philippines/both). Optional CurrentsAPI news MCP (set up via /init-mcp) grounds what's selling today; falls back to WebSearch. Requires the idea-incubation-review plugin installed. Use when you want fresh, market-validated software ideas rather than judging one idea you already have.",
+      "version": "0.2.1"
+    },
+    {
+      "name": "idea-refine",
+      "source": "./plugins/idea-refine/",
+      "description": "Drive one existing idea to a READY verdict from the idea-incubation-review gate — a bounded loop that gates the idea, reads the review's gaps, researches the web to close them (segment, competitors, pricing, revenue path — cited, never guessed), re-gates the refined idea, and repeats until READY or until it provably can't. Pushes back honestly instead of faking a pass: software-first fails, unclosable fatal gaps, and non-convergence stop the loop with a reshape-or-park recommendation. Fans out three refine analysts (market, business, buildability) that cite sources like idea-scout's. Requires the idea-incubation-review plugin installed (the gate). Use to fix a specific idea that failed review, not to generate new ideas.",
       "version": "0.1.0"
     }
   ]

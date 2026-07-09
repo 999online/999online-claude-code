@@ -1,7 +1,7 @@
 {
   "name": "idea-scout",
-  "description": "Generate sellable software ideas grounded in real web evidence, then loop each through the idea-incubation-review gate until 5 pass READY. Fans out four generation analysts (trend, demand, whitespace, monetization) that cite sources, dedupes against a persistent ledger of every idea ever proposed, and auto-refines a REFINE candidate once. Every proposed idea carries source URLs for why it was picked. Optional CurrentsAPI news MCP (set up via /init-mcp) grounds what's selling today; falls back to WebSearch. Requires the idea-incubation-review plugin installed. Use when you want fresh, market-validated software ideas rather than judging one idea you already have.",
-  "version": "0.1.0",
+  "description": "Generate sellable software ideas grounded in real web evidence, then loop each through the idea-incubation-review gate until 5 pass READY. Fans out four generation analysts (trend, demand, whitespace, monetization) that cite sources and run a standing Philippines-market lens alongside the global scan, dedupes against a persistent ledger of every idea ever proposed, and auto-refines a REFINE candidate once. Every proposed idea carries source URLs for why it was picked and a target-market tag (global/Philippines/both). Optional CurrentsAPI news MCP (set up via /init-mcp) grounds what's selling today; falls back to WebSearch. Requires the idea-incubation-review plugin installed. Use when you want fresh, market-validated software ideas rather than judging one idea you already have.",
+  "version": "0.2.1",
   "author": {
     "name": "audrueygana-lmph",
     "email": "audruey.gana@legalmatch.com"

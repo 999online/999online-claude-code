@@ -118,6 +118,8 @@ Needs: network (WebSearch/WebFetch). Works with zero setup — bundles distilled
 
 Finds **sellable** software ideas — generation, not judging. Runs one command, loops until **5 ideas that would actually sell** all pass the `idea-incubation-review` gate (verdict READY). Each round: four market analysts dig in parallel (trend / demand / whitespace / monetization, each citing sources), their briefs synthesize into software-first candidates, every candidate is deduped against a persistent ledger of past proposals, then gated through `/incubation-review`. READY → kept; REFINE → auto-refined once, re-gated; RETHINK → logged, dropped. No idea proposed twice; every kept idea carries the source URLs for **why** it was picked. Bounded (≤5 rounds) so it never spins.
 
+Analysts run a **standing Philippines-market lens** alongside the global scan every run — PH-specific trends, pains, whitespace, and monetization (PHP pricing, GCash/Maya/InstaPay, local compliance) — regardless of focus. Each idea carries a target-market tag (`global` / `Philippines` / `both`). Want PH-only? Pass focus `"Philippines"`.
+
 ```
 /plugin install idea-scout@999online
 /scout-ideas [optional focus — e.g. "b2b saas"]
@@ -127,6 +129,21 @@ Finds **sellable** software ideas — generation, not judging. Runs one command,
 Agents: `sellable-trend-analyst`, `sellable-demand-analyst`, `sellable-whitespace-analyst`, `sellable-monetization-analyst` (all sonnet). Skills (also standalone): `idea-scout-loop` (orchestrate the gate loop to 5), `idea-generate` (fan out analysts → cited candidates), `idea-ledger` (persistent dedup ledger at `docs/proposed-ideas/LEDGER.md`).
 
 Needs: **idea-incubation-review installed** (it's the gate — `/scout-ideas` stops with an install line if missing), network (WebSearch/WebFetch), Node ≥18 (for the bundled MCP). Token-heavy: each candidate runs a full incubation-review. Optional: `/init-mcp <token>` wires a **bundled, zero-dependency CurrentsAPI news MCP** (`mcp/server.js`, morelevels pattern) for fresh "what's selling today" grounding — key saved to `~/.currentsapi-scout.json` (mode 0600, never committed), read lazily so it works immediately, **no restart**; free tier ~1,000 req/day; no token → prints signup steps. Falls back to WebSearch when absent.
+
+### idea-refine
+
+Takes **one existing idea** that failed `idea-incubation-review` and drives it to **READY** — the fix-it counterpart to idea-scout's generate-new. Bounded loop: gate the idea → read the review's gaps from `SUMMARY.md` → fan out only the gap-matching refine analysts (market / business / buildability) to close each gap with **cited** web evidence → re-gate the refined idea → repeat until READY. Pass a one-line idea or a slug already reviewed under `docs/incubation/<slug>/`.
+
+**Pushes back instead of faking a pass.** Software-first fail (needs people to run it), a fatal gap with no real evidence, or the same decisive gap two iterations → stops with a reshape-or-park recommendation. Only a re-gated READY counts; a non-READY idea is never presented as passed. Bounded (≤3 iterations) so it never spins.
+
+```
+/plugin install idea-refine@999online
+/refine-idea [existing idea one-liner, or a reviewed slug]
+```
+
+Agents: `refine-market-analyst`, `refine-business-analyst`, `refine-buildability-analyst` (all sonnet, WebSearch/WebFetch, cite every claim, report a gap `UNCLOSABLE` when no real evidence). Skills (also standalone): `idea-refine-loop` (orchestrate the bounded gate loop + pushback), `idea-refine-gaps` (one refinement pass → fan out analysts → refined idea). Writes `REFINE-*.md` briefs alongside the gate's dossiers in `docs/incubation/<slug>/`.
+
+Needs: **idea-incubation-review installed** (the gate — `/refine-idea` stops with an install line if missing), network (WebSearch/WebFetch). Token-heavy: each iteration re-runs a full incubation-review. No MCP — refinement is targeted evidence-hunting on WebSearch/WebFetch.
 
 ## Layout
 

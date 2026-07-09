@@ -6,6 +6,6 @@ allowed-tools: Skill, Read, Write, Glob, Task, Agent, AskUserQuestion
 
 Run the sellable-idea scout.
 
-Invoke skill `idea-scout-loop`. Pass `$ARGUMENTS` as optional focus (empty → sellable software broadly, today's market).
+Invoke skill `idea-scout-loop`. Pass `$ARGUMENTS` as optional focus (empty → sellable software broadly, today's market). Analysts run a standing Philippines-market lens alongside the global scan every run, regardless of focus.
 
 `idea-scout-loop` owns the whole run: preflight (require `idea-incubation-review`, suggest CurrentsAPI MCP), generate → dedupe → gate through `/incubation-review` → loop until 5 ideas hit READY. Don't reimplement here.

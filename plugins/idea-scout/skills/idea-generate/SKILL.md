@@ -25,14 +25,16 @@ Inputs from caller: optional `focus`, how many candidates needed (`need`), a `ru
 3. **Synthesize** the four briefs into `need + 2` candidate ideas (a couple extra so gate rejections don't starve the round). Each candidate:
    - **Software-first** — delivered + operated as software through profitability: no new headcount, no manual ops, no physical presence. (This is incubation-review's hard gate. An idea that can't clear it is wasted work — don't propose it.)
    - Sits at the intersection of the briefs: a rising trend + a real unmet need + a competitive gap + a buyer with budget. Weak on any of the four → drop it.
+   - **Target market** — every candidate names its market: `global`, `Philippines`, or `both`. Briefs carry a standing PH lens (PH-specific trends/pains/gaps/monetization); mine at least one PH-targeted or PH-inclusive candidate per round when the PH slices show real signal. Don't force a weak PH idea — a `[PH]` tag still needs the four-way intersection.
    - **Cited** — a `## Sources` list of URLs backing *why we propose it*. No sources → not a candidate (requirement: no idea without a basis).
    - **Fresh** — run each past `idea-ledger` dedup-check. Duplicate → drop, generate another.
 
-4. **Return** the candidate list. Per candidate: name, one-line pitch, why-it-sells (2–3 lines drawn from the briefs), source URLs, proposed kebab-case slug.
+4. **Return** the candidate list. Per candidate: name, one-line pitch, target market (global/Philippines/both), why-it-sells (2–3 lines drawn from the briefs), source URLs, proposed kebab-case slug.
 
 ## Rules
 
 - Cite everything load-bearing. Drop unverifiable claims — don't guess a trend.
 - "Everyone" is not a buyer. Name one segment per idea.
+- Philippines is a standing lens, not the only lens. Cover PH every run; keep global candidates too unless the caller's `focus` says PH-only.
 - Prefer CurrentsAPI MCP for fresh news when connected (analysts handle this); WebSearch otherwise.
 - Don't score, rank by confidence, or judge viability here — hand candidates to the gate.

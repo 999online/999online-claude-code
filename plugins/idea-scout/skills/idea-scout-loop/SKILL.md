@@ -40,6 +40,7 @@ Once `winners` == 5 (or the cap trips), show:
 For each idea:
 ```
 ### <n>. <Name> — <one-liner>
+**Market:** <global | Philippines | both>
 **Why it sells:** <2–3 lines, market-grounded>
 **Sources:** <url> · <url> · <url>
 **Incubation:** READY · <Commercial | Internal> track · docs/incubation/<slug>/SUMMARY.md
@@ -53,4 +54,5 @@ Then one line: ledger updated at `docs/proposed-ideas/LEDGER.md` (N total tried 
 - **Every winner carries source URLs.** An idea with no basis is not presentable — refuse it (requirement).
 - **No duplicates.** Trust `idea-ledger` dedup; never re-propose a ledger slug.
 - **READY is the bar.** Never present a REFINE or RETHINK idea as a winner.
+- **Philippines is a standing lens.** Analysts cover PH every run alongside the global market; aim for ≥1 PH-targeted or PH-inclusive winner when PH signal supports it — never force a weak one past the gate.
 - Autonomous: don't ask the user between rounds. Only surface a blocker if the gate itself can't run (missing plugin → handled in preflight).

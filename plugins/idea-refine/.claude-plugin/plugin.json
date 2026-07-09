@@ -1,0 +1,22 @@
+{
+  "name": "idea-refine",
+  "description": "Drive one existing idea to a READY verdict from the idea-incubation-review gate — a bounded loop that gates the idea, reads the review's gaps, researches the web to close them (segment, competitors, pricing, revenue path — cited, never guessed), re-gates the refined idea, and repeats until READY or until it provably can't. Pushes back honestly instead of faking a pass: software-first fails, unclosable fatal gaps, and non-convergence stop the loop with a reshape-or-park recommendation. Fans out three refine analysts (market, business, buildability) that cite sources like idea-scout's. Requires the idea-incubation-review plugin installed (the gate). Use to fix a specific idea that failed review, not to generate new ideas.",
+  "version": "0.1.0",
+  "author": {
+    "name": "audrueygana-lmph",
+    "email": "audruey.gana@legalmatch.com"
+  },
+  "repository": "https://github.com/999online/999online-claude-code",
+  "commands": [
+    "./commands/refine-idea.md"
+  ],
+  "agents": [
+    "./agents/refine-market-analyst.md",
+    "./agents/refine-business-analyst.md",
+    "./agents/refine-buildability-analyst.md"
+  ],
+  "skills": [
+    "./skills/idea-refine-loop",
+    "./skills/idea-refine-gaps"
+  ]
+}
