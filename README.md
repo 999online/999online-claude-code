@@ -103,14 +103,14 @@ Needs: Node 22+, npm, network; Expo Go app on a phone for local run; free Expo a
 
 ### idea-incubation-review
 
-Initial research + viability verdict for a raw idea against 999's incubation criteria. Fans out three analysts in parallel (buildability, market/adoption, business), then scores against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09 commercial / page-10 internal scorecard). Enforces the software-first hard gate (fail → auto-RETHINK). Answers *buildable per the operating model?* and *viable per the rulebook?*, classifies Commercial vs Internal track, lists gaps to close + missing presenter deliverables. Writes dossiers + `SUMMARY.md` to `docs/incubation/<slug>/`. Stack guidance follows the operating model — prefer managed platforms (Cloudflare/Vercel/Supabase/Firebase/Railway/Render/Fly.io/Neon/Turso), **no mandated default**; pick the simplest credible for the hypothesis; mobile → managed workflow (Expo/Flutter/PWA/Ionic).
+Initial research + viability verdict for a raw idea against 999's incubation criteria. Fans out three analysts in parallel (buildability, market/adoption, business), scores against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09 commercial / page-10 internal scorecard), then runs the **fit-check pass — its verdict is decisive**; scorecard bands become supporting evidence. Fit-check adds readiness card, red-flag shape check, assumption ledger, Sean Ellis PMF lens, filled proposal draft + cheat-sheet HTML. Enforces the software-first hard gate (fail → auto-RETHINK under both). Answers *buildable per the operating model?* and *viable per the rulebook?*, classifies Commercial vs Internal track, lists gaps to close + missing presenter deliverables. Writes dossiers + `SUMMARY.md` (with appended `## Fit check (decisive)` section) to `docs/incubation/<slug>/`. Stack guidance follows the operating model — prefer managed platforms (Cloudflare/Vercel/Supabase/Firebase/Railway/Render/Fly.io/Neon/Turso), **no mandated default**; pick the simplest credible for the hypothesis; mobile → managed workflow (Expo/Flutter/PWA/Ionic).
 
 ```
 /plugin install idea-incubation-review@999online
 /incubation-review [one-line idea]
 ```
 
-Agents: `incubation-architecture-analyst` (opus), `incubation-market-analyst` (sonnet), `incubation-business-analyst` (opus). Skills (also standalone): `incubation-research` (classify track + fan out analysts), `incubation-scorecard` (score + verdict).
+Agents: `incubation-architecture-analyst` (opus), `incubation-market-analyst` (sonnet), `incubation-business-analyst` (opus). Skills (also standalone): `incubation-research` (classify track + fan out analysts), `incubation-scorecard` (band scoring), `fit-check` (decisive verdict pass — bundled verbatim from the fit-check handover, keeps own criteria copy in its `references/`; known drift risk vs plugin's rulebook refs, update both when criteria change).
 
 Needs: network (WebSearch/WebFetch). Works with zero setup — bundles distilled 999 criteria. Optional: connect a Confluence-reader MCP (tools `confluence_*`) to freshen criteria from the live PIH space and flag snapshot drift — see the plugin's `references/confluence-mcp-setup.md`.
 

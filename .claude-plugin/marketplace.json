@@ -3,14 +3,14 @@
   "owner": { "name": "999online" },
   "metadata": {
     "description": "Claude Code plugin marketplace for 999online developers.",
-    "version": "0.1.4"
+    "version": "0.1.5"
   },
   "plugins": [
     {
       "name": "web-scaffold",
       "source": "./plugins/web-scaffold/",
       "description": "Agentic web project scaffolding on incubation architecture standards — discover idea, pick lightest credible golden path (landing / full-stack / internal tool / API service), approve ADR, scaffold via official scaffolders (stubs only, zero feature code — feature work happens inside generated project), verify structurally against decision standard. Cloudflare-default; full-stack paths scaffold a Turborepo monorepo (apps/web + apps/api + packages/db). Strict structure contract + guard hooks enforced in generated projects.",
-      "version": "0.6.0"
+      "version": "0.6.1"
     },
     {
       "name": "mobile-scaffold",
@@ -21,8 +21,8 @@
     {
       "name": "idea-incubation-review",
       "source": "./plugins/idea-incubation-review/",
-      "description": "Initial research + viability verdict for a raw idea against 999's internal incubation criteria — fan out three analysts (buildability, market/adoption, business), then score against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09/10 scorecard) with a software-first hard gate. Answers buildable-per-docs? and viable-per-rulebook?, classifies Commercial vs Internal track, lists gaps and missing presenter deliverables. Works with zero setup; a connected Confluence-reader MCP freshens criteria and flags drift.",
-      "version": "0.2.2"
+      "description": "Initial research + viability verdict for a raw idea against 999's internal incubation criteria — fan out three analysts (buildability, market/adoption, business), score against the Pre-Presentation Rulebook (20-item) and the Idea Incubation Operating Model (page-09/10 scorecard) with a software-first hard gate, then run the fit-check pass (readiness card, red-flag shapes, assumption ledger, Sean Ellis lens) whose verdict is decisive. Answers buildable-per-docs? and viable-per-rulebook?, classifies Commercial vs Internal track, lists gaps and missing presenter deliverables. Works with zero setup; a connected Confluence-reader MCP freshens criteria and flags drift.",
+      "version": "0.3.0"
     },
     {
       "name": "idea-scout",
