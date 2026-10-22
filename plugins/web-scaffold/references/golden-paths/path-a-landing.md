@@ -34,8 +34,9 @@ npm create astro@latest <dir> -- --template minimal --install --no-git --yes
 
 Alternate (Next.js):
 ```bash
-npx create-next-app@latest <dir> --ts --app --tailwind --eslint --yes
+npx create-next-app@latest <dir> --ts --app --tailwind --eslint --no-cache-components --yes
 ```
+Next on Pages static deploy → set `output: 'export'` in scaffolded `next.config.ts` (one-line edit to scaffolder output, not hand-written config). `--no-cache-components` required: Next 16 enables Cache Components by default, build fails with `output: 'export'` ("PPR cannot be enabled in export mode").
 
 Flags rejected → run scaffolder `--help` first, adapt, never fall back to interactive mode.
 

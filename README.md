@@ -145,6 +145,30 @@ Agents: `refine-market-analyst`, `refine-business-analyst`, `refine-buildability
 
 Needs: **idea-incubation-review installed** (the gate — `/refine-idea` stops with an install line if missing), network (WebSearch/WebFetch). Token-heavy: each iteration re-runs a full incubation-review. No MCP — refinement is targeted evidence-hunting on WebSearch/WebFetch.
 
+### product-wiki
+
+Runs **project manager / product owner** on a codebase and **never touches code**. Stakeholders describe features in plain language; the plugin interrogates them into a named problem, user, outcome and **testable** acceptance criteria, checks the wiki for duplicates and contradictions first, then files a feature page. From there it maps dependencies across features and systems, sequences delivery into waves, recommends improvements and cuts, lints itself, answers questions with citations, and writes stakeholder reports.
+
+**Its only output is a markdown wiki**, living in its own directory **outside** the code repo (Obsidian-ready — open the wiki root as a vault). The code repo is read-only input, always. `WIKI.md` holds the schema every invocation reads first; `index.md` is the catalog, `log.md` an append-only greppable event log. Pages carry frontmatter (`status`, `priority`, `owner`, `depends_on`, `blocks`), Obsidian `[[wikilinks]]`, and hard length budgets. A page edited by a human is appended to, never rewritten.
+
+**Bootstraps an existing project.** Three analysts run in parallel over the repository (what already ships), **past Claude Code session transcripts** (the decisions and abandoned attempts the code doesn't record), and existing tickets when a Jira/Confluence reader MCP is connected. Bootstrap output lands as `status: proposed` — candidate, not truth. Resume-safe: a brief already on disk is reused.
+
+**Dependencies are computed, not eyeballed.** A bundled zero-dependency script does topological order and cycle detection over `depends_on` frontmatter; the model classifies each edge (technical / data / sequencing / shared-component / external / org) and must name the mechanism or mark it `assumed`. Cycles are surfaced, never silently broken. A p0 sitting behind a p3 prerequisite gets escalated, not quietly reordered.
+
+```
+/plugin install product-wiki@999online
+/product-wiki [wiki directory — absolute path, outside this repo]
+/feature-request <what the stakeholder wants, in their own words>
+/product-plan
+/product-review [feature slug or epic to scope]
+/product-status [exec | team | standup | release-notes]
+/product-ask <question about the product>
+```
+
+Agents: `product-repo-analyst`, `product-history-analyst`, `product-ticket-analyst` (all sonnet, read-only, evidence-cited; the ticket one spawns only when a reader MCP is detected). Skills (also standalone): `product-wiki-init` (create + register the wiki), `product-wiki-bootstrap` (seed from repo + sessions + tickets), `feature-intake` (interrogate a request into a feature page), `feature-dependencies` (classify edges, detect cycles), `delivery-sequence` (waves, critical path, cuts), `product-improve` (PO recommendations ledger), `product-wiki-lint` (health check), `product-wiki-ask` (cited query, file the answer back), `stakeholder-report` (audience-shaped status).
+
+Needs: Node ≥18 (bundled `dep-graph.mjs` + `session-digest.mjs`, zero dependencies, both `--selftest`-able). No network, no MCP required. Optional: a **Jira/Confluence reader MCP** (detected by tool description, not name) adds ticket import — absent, bootstrap says so once and continues. Reads past sessions from `~/.claude/projects/`. Never edits code, never auto-commits, never creates tickets — ticket creation is `idea-to-ticket`'s job.
+
 ## Layout
 
 ```

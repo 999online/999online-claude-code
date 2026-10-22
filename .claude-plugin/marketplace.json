@@ -3,7 +3,7 @@
   "owner": { "name": "999online" },
   "metadata": {
     "description": "Claude Code plugin marketplace for 999online developers.",
-    "version": "0.1.5"
+    "version": "0.1.6"
   },
   "plugins": [
     {
@@ -34,6 +34,12 @@
       "name": "idea-refine",
       "source": "./plugins/idea-refine/",
       "description": "Drive one existing idea to a READY verdict from the idea-incubation-review gate — a bounded loop that gates the idea, reads the review's gaps, researches the web to close them (segment, competitors, pricing, revenue path — cited, never guessed), re-gates the refined idea, and repeats until READY or until it provably can't. Pushes back honestly instead of faking a pass: software-first fails, unclosable fatal gaps, and non-convergence stop the loop with a reshape-or-park recommendation. Fans out three refine analysts (market, business, buildability) that cite sources like idea-scout's. Requires the idea-incubation-review plugin installed (the gate). Use to fix a specific idea that failed review, not to generate new ideas.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "product-wiki",
+      "source": "./plugins/product-wiki/",
+      "description": "Act as project manager / product owner over a markdown product wiki — never touches code. Stakeholders describe features in plain language; the plugin interrogates them into real acceptance criteria, files a feature page, maps dependencies across features and systems (with deterministic topological order and cycle detection), sequences delivery into roadmap waves, recommends improvements and cuts a good PO would push for, lints the wiki for contradictions and stale claims, answers questions with page citations, and writes stakeholder status reports. Bootstraps an existing project by fanning out three analysts over the repository, past Claude Code session transcripts, and (when a Jira/Confluence reader MCP is connected) existing tickets. The wiki lives in its own directory outside the code repo, Obsidian-ready, and is the only thing the plugin ever writes. Use to run product management on a codebase; not for writing or changing code, and not for creating Jira tickets (that is idea-to-ticket).",
       "version": "0.1.0"
     }
   ]

@@ -1,0 +1,34 @@
+{
+  "name": "product-wiki",
+  "description": "Act as project manager / product owner over a markdown product wiki — never touches code. Stakeholders describe features in plain language; the plugin interrogates them into real acceptance criteria, files a feature page, maps dependencies across features and systems (with deterministic topological order and cycle detection), sequences delivery into roadmap waves, recommends improvements and cuts a good PO would push for, lints the wiki for contradictions and stale claims, answers questions with page citations, and writes stakeholder status reports. Bootstraps an existing project by fanning out three analysts over the repository, past Claude Code session transcripts, and (when a Jira/Confluence reader MCP is connected) existing tickets. The wiki lives in its own directory outside the code repo, Obsidian-ready, and is the only thing the plugin ever writes. Use to run product management on a codebase; not for writing or changing code, and not for creating Jira tickets (that is idea-to-ticket).",
+  "version": "0.1.0",
+  "author": {
+    "name": "audrueygana-lmph",
+    "email": "audruey.gana@legalmatch.com"
+  },
+  "repository": "https://github.com/999online/999online-claude-code",
+  "commands": [
+    "./commands/product-wiki.md",
+    "./commands/feature-request.md",
+    "./commands/product-plan.md",
+    "./commands/product-review.md",
+    "./commands/product-status.md",
+    "./commands/product-ask.md"
+  ],
+  "agents": [
+    "./agents/product-repo-analyst.md",
+    "./agents/product-history-analyst.md",
+    "./agents/product-ticket-analyst.md"
+  ],
+  "skills": [
+    "./skills/product-wiki-init",
+    "./skills/product-wiki-bootstrap",
+    "./skills/feature-intake",
+    "./skills/feature-dependencies",
+    "./skills/delivery-sequence",
+    "./skills/product-improve",
+    "./skills/product-wiki-lint",
+    "./skills/product-wiki-ask",
+    "./skills/stakeholder-report"
+  ]
+}

@@ -50,7 +50,7 @@ No CI/CD required before first deployment when platform CLI or Git deploy safely
 
 Lightest Git-driven deploy for **static frontend output** (path A landing; any static export). No YAML, no repo secrets, no API token — dashboard-managed.
 
-Setup (one-time, Cloudflare dashboard): Workers & Pages → Create → **Pages** tab → **Connect to Git** → pick the GitHub repo → set build (framework preset or None, build command, output dir) → **Save and Deploy**. Build settings per scaffolder: Astro `npm run build` → `dist`; static Next `next build && next export` → `out`; SvelteKit/Vite → per adapter.
+Setup (one-time, Cloudflare dashboard): Workers & Pages → Create → **Pages** tab → **Connect to Git** → pick the GitHub repo → set build (framework preset or None, build command, output dir) → **Save and Deploy**. Build settings per scaffolder: Astro `npm run build` → `dist`; static Next `npm run build` → `out` (needs `output: 'export'` in `next.config.ts` and no `cacheComponents`; `next export` CLI removed); SvelteKit/Vite → per adapter.
 
 After connect: push to production branch auto-deploys; every other branch auto-gets an isolated **Preview** URL (`<branch>.<project>.pages.dev`), production branch untouched. Rollback = re-deploy a prior deployment from the dashboard Deployments tab.
 
