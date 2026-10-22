@@ -3,3 +3,9 @@ node_modules/
 .env.local
 *.log
 .DS_Store
+
+# Internal 999 source docs — do not publish (repo is public)
+docs/incubation-source/
+
+# Claude Code runtime lock
+.claude/scheduled_tasks.lock
