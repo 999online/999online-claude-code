@@ -1,0 +1,19 @@
+{
+  "name": "rn-store-readiness",
+  "description": "Evaluate how ready a React Native or Expo app is for App Store and Google Play submission, stage by stage — TestFlight internal, TestFlight external (Beta App Review), App Store, and Play internal, closed, open and production tracks. A zero-dependency read-only scanner reads app config, EAS profiles, native projects, permissions and purpose strings, privacy manifests, 16 KB native-library alignment, copyleft licenses, secrets and account-deletion / privacy-policy / AI-consent signals; the evaluation confirms each finding with file:line evidence against a gated catalog of 60 current store-policy checks (dated, re-verified when stale) and writes a readiness report with a verdict per stage, blockers in fix order and the store-console tasks left — plus a shareable claude.ai dashboard refreshed on every run. Standalone skills: quick scan, evaluate, dashboard, and a 16 KB alignment check for any AAB/APK. Never changes app code. Use before a first TestFlight or Play upload, or to answer what blocks the next stage.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Jomari Iringan",
+    "email": "jomari.iringan@legalmatch.ph"
+  },
+  "repository": "https://github.com/999online/999online-claude-code",
+  "commands": [
+    "./commands/rn-store-readiness.md"
+  ],
+  "skills": [
+    "./skills/rn-store-scan",
+    "./skills/rn-store-evaluate",
+    "./skills/rn-store-dashboard",
+    "./skills/android-16kb-check"
+  ]
+}

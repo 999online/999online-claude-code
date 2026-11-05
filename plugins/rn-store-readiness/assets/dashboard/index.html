@@ -1,0 +1,526 @@
+<meta name="dash-one-writer">
+<style>
+  /* Layout: verdict sentence and tiles on top, the two store ladders, then fix order beside watch-outs;
+     every check and the console tasks get their own tabs. All values come from the five datasets. */
+  .sr { display: grid; gap: var(--cds-gap-lg); max-width: 78rem; margin-inline: auto; font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+  .sr p, .sr h1, .sr h2 { margin: 0; }
+  .sr-head { display: grid; gap: var(--cds-gap-sm); }
+  .sr-eyebrow { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .06em; text-transform: uppercase; }
+  .sr-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: calc(var(--cds-font-size-title) * 1.35); line-height: 1.15; text-wrap: balance; }
+  .sr-takeaway { font-size: var(--cds-font-size-heading); line-height: 1.45; max-width: 62ch; text-wrap: pretty; }
+  .sr .sr-takeaway b { font-weight: var(--cds-font-weight-medium); }
+  .sr-meta, .sr-scope, .sr-foot { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+  .sr-scope { max-width: 75ch; }
+  .sr-meta code { font-size: inherit; }
+
+  .sr-tabs { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
+  .sr-tab { appearance: none; border: 0; background: none; color: var(--color-fg-muted); font: inherit; font-size: var(--cds-font-size-body); padding: var(--cds-pad-sm) var(--cds-pad-md); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
+  .sr-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); }
+  .sr-tab:focus-visible, .sr button:focus-visible, .sr-search:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+  .sr-view { display: grid; gap: var(--cds-gap-lg); }
+
+  .sr-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--cds-gap-md); }
+  .sr-tile { display: grid; gap: var(--cds-gap-xs); align-content: start; padding: var(--cds-pad-md) var(--cds-pad-lg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+  .sr-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .sr-tile-value { font-family: var(--font-anthropic-serif); font-size: calc(var(--cds-font-size-title) * 1.25); line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .sr .sr-tile-value b { font-weight: 400; }
+  .sr-of { font-size: var(--cds-font-size-body); color: var(--color-fg-muted); font-family: var(--font-anthropic-sans); }
+  .sr-tile-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.4; }
+  .sr-tile.is-alert[data-alert="blockers"] .sr-tile-value { color: var(--color-bad); }
+  .sr-tile.is-alert[data-alert="high"] .sr-tile-value { color: var(--color-warn); }
+
+  .sr-card { display: grid; gap: var(--cds-gap-md); align-content: start; min-width: 0; padding: var(--cds-pad-lg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+  .sr-card-head { display: grid; gap: var(--cds-gap-xs); }
+  .sr-card-head h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+  .sr-card-head p { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); max-width: 70ch; line-height: 1.45; }
+  .sr-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: var(--cds-gap-md); align-items: start; }
+
+  .sr-track { display: grid; gap: var(--cds-gap-sm); }
+  .sr-track-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .06em; text-transform: uppercase; }
+  .sr-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12.5rem), 1fr)); gap: var(--cds-gap-sm); min-height: 7.5rem; }
+  .sr-step { appearance: none; font: inherit; color: inherit; text-align: left; cursor: pointer; display: grid; gap: var(--cds-gap-xs); align-content: start; padding: var(--cds-pad-md); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line); background: var(--color-bg); }
+  .sr-step:hover { border-color: var(--color-fg-muted); }
+  .sr-step-top { display: flex; align-items: center; justify-content: space-between; gap: var(--cds-gap-sm); }
+  .sr-step-code { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .sr-step-name { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+  .sr-step-counts, .sr-step-ids, .sr-step-next { font-size: var(--cds-font-size-caption); line-height: 1.4; }
+  .sr-step-counts { color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+  .sr-step-ids { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .sr-step-next { color: var(--color-fg-muted); }
+  .sr-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm) var(--cds-gap-lg); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .sr-legend span { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); }
+
+  .sr-pill { display: inline-flex; align-items: center; padding: 0 .6em; border-radius: 999px; font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); line-height: 1.75; white-space: nowrap; color: var(--color-fg-muted); background: color-mix(in srgb, var(--color-fg-muted) 13%, transparent); }
+  .sr-pill[data-tone="bad"] { color: var(--color-bad); background: color-mix(in srgb, var(--color-bad) 14%, transparent); }
+  .sr-pill[data-tone="warn"] { color: var(--color-warn); background: color-mix(in srgb, var(--color-warn) 16%, transparent); }
+  .sr-pill[data-tone="ok"] { color: var(--color-ok); background: color-mix(in srgb, var(--color-ok) 14%, transparent); }
+
+  .sr-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+  .sr-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+  .sr-seg button, .sr-picked { appearance: none; font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); background: var(--color-bg); border: 0; padding: var(--cds-pad-xs) var(--cds-pad-sm); cursor: pointer; font-variant-numeric: tabular-nums; }
+  .sr-seg button + button { border-left: 1px solid var(--color-border-line); }
+  .sr-seg button[aria-pressed="true"] { color: var(--color-fg); background: var(--color-panel); font-weight: var(--cds-font-weight-medium); }
+  .sr-picked { border: 1px solid var(--color-border-line); border-radius: 999px; color: var(--color-fg); }
+  .sr-search { flex: 1 1 12rem; min-width: 0; font: inherit; font-size: var(--cds-font-size-caption); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); }
+
+  .sr-tablebox { overflow: auto; max-height: 72vh; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); }
+  .sr-tablebox.is-short { max-height: none; }
+  .sr-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); line-height: 1.45; }
+  .sr-table th { position: sticky; top: 0; z-index: 1; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+  .sr-table td { padding: var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .sr-table tr:last-child td { border-bottom: 0; }
+  .sr-table td.sr-id, .sr-table td.sr-num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .sr-table td.sr-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .sr-table td.sr-muted { color: var(--color-fg-muted); }
+  .sr-table td.sr-text { min-width: 14rem; }
+  .sr-sort { appearance: none; border: 0; background: none; font: inherit; color: inherit; padding: 0; cursor: pointer; }
+  .sr-sort::after { content: ""; display: inline-block; width: .9em; }
+  th[aria-sort="ascending"] .sr-sort::after { content: " ↑"; }
+  th[aria-sort="descending"] .sr-sort::after { content: " ↓"; }
+  .sr-link { appearance: none; border: 0; background: none; padding: 0; font: inherit; color: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+  .sr-table a { color: inherit; text-underline-offset: 2px; }
+  .sr-empty { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  @media (max-width: 760px) { .sr-table .sr-wide { display: none; } }
+  [data-dash-source-state=empty] { color: transparent; }
+  [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="sr">
+  <header class="sr-head" id="top">
+    <p class="sr-eyebrow">App Store and Google Play</p>
+    <h1 class="sr-title"><span data-draw="project" data-source="run" data-field="project">—</span> store readiness</h1>
+    <p class="sr-takeaway">
+      <span data-say="blocked"><b data-draw="say-blocked" data-source="summary" data-field="stages_blocked">—</b> of <b data-draw="say-total" data-source="summary" data-field="stages_total">—</b> release stages are blocked. Fix first: <b data-draw="say-next-id" data-source="next_fix" data-field="id">—</b> <span data-draw="say-next-title" data-source="next_fix" data-field="title">—</span>.</span>
+      <span data-say="risk" hidden>No blockers found. <b data-draw="say-risk" data-source="summary" data-field="stages_risk">—</b> stages still have high risks or items to confirm before you submit.</span>
+      <span data-say="ready" hidden>Every stage is ready on the evidence checked. Confirm the store console tasks, then submit.</span>
+    </p>
+    <p class="sr-meta">Evaluated <span data-draw="m-evaluated" data-source="run" data-field="evaluated">—</span> · commit <code data-draw="m-commit" data-source="run" data-field="commit">—</code> · store rules checked <span data-draw="m-policies" data-source="run" data-field="policies_verified">—</span> · <span data-draw="m-stack" data-source="run" data-field="stack">—</span></p>
+    <p class="sr-scope">Project plan: <span data-draw="m-scope" data-source="run" data-field="scope">—</span></p>
+  </header>
+
+  <nav class="sr-tabs" role="tablist" aria-label="Views">
+    <button class="sr-tab" type="button" role="tab" data-tab="overview" aria-controls="overview" aria-selected="true">Overview</button>
+    <button class="sr-tab" type="button" role="tab" data-tab="checks" aria-controls="checks" aria-selected="false">All checks</button>
+    <button class="sr-tab" type="button" role="tab" data-tab="tasks" aria-controls="tasks" aria-selected="false">Store console tasks</button>
+  </nav>
+
+  <section class="sr-view" id="overview" role="tabpanel" aria-label="Overview">
+    <div class="sr-tiles" id="totals">
+      <div class="sr-tile">
+        <p class="sr-tile-label">Stages ready</p>
+        <p class="sr-tile-value"><b data-draw="t-ready" data-source="summary" data-field="stages_ready">—</b><span class="sr-of"> of <span data-draw="t-total" data-source="summary" data-field="stages_total">—</span></span></p>
+        <p class="sr-tile-note">TestFlight to App Store, Play internal to production</p>
+      </div>
+      <div class="sr-tile" data-alert="blockers">
+        <p class="sr-tile-label">Blockers</p>
+        <p class="sr-tile-value"><b data-draw="t-blockers" data-source="summary" data-field="blockers">—</b></p>
+        <p class="sr-tile-note">Upload or review would be rejected</p>
+      </div>
+      <div class="sr-tile" data-alert="high">
+        <p class="sr-tile-label">High risks</p>
+        <p class="sr-tile-value"><b data-draw="t-high" data-source="summary" data-field="high">—</b></p>
+        <p class="sr-tile-note">Likely rejection, policy strike or broken feature</p>
+      </div>
+      <div class="sr-tile">
+        <p class="sr-tile-label">To confirm</p>
+        <p class="sr-tile-value"><b data-draw="t-confirm" data-source="summary" data-field="confirm">—</b></p>
+        <p class="sr-tile-note">Can't be told from the code: consoles, devices, legal</p>
+      </div>
+      <div class="sr-tile">
+        <p class="sr-tile-label">Passing</p>
+        <p class="sr-tile-value"><b data-draw="t-passing" data-source="summary" data-field="passing">—</b></p>
+        <p class="sr-tile-note">Checks already met or not applicable</p>
+      </div>
+    </div>
+
+    <article class="sr-card" id="stages">
+      <header class="sr-card-head">
+        <h2>Release stages</h2>
+        <p>Each stage needs everything the stages before it need. Pick a stage to see the checks it depends on.</p>
+      </header>
+      <div class="sr-track">
+        <p class="sr-track-label">App Store</p>
+        <div class="sr-steps dash-skeleton" id="steps-ios" data-draw="steps-ios" data-source="stages"></div>
+      </div>
+      <div class="sr-track">
+        <p class="sr-track-label">Google Play</p>
+        <div class="sr-steps dash-skeleton" id="steps-android" data-draw="steps-android" data-source="stages"></div>
+      </div>
+      <p class="sr-legend">
+        <span><span class="sr-pill" data-tone="bad">BLOCKED</span> a blocker is open at or before this stage</span>
+        <span><span class="sr-pill" data-tone="warn">AT RISK</span> high risks or unconfirmed blocker-level items</span>
+        <span><span class="sr-pill" data-tone="ok">READY</span> every check up to here passes</span>
+      </p>
+    </article>
+
+    <div class="sr-pair">
+      <article class="sr-card" id="fix-first">
+        <header class="sr-card-head">
+          <h2>Fix first</h2>
+          <p>Earliest blocked stage first. Effort: S under a day, M a few days, L needs a decision or another team. Select a check to see its evidence and fix.</p>
+        </header>
+        <div class="sr-tablebox is-short">
+          <table class="sr-table" data-source="fix_order" data-row-key="key">
+            <thead><tr><th data-field="order">#</th><th data-field="id">Check</th><th data-field="title">Problem</th><th data-field="gate">Needed by</th><th data-field="effort">Effort</th></tr></thead>
+            <tbody data-draw="fix-rows"></tbody>
+          </table>
+        </div>
+        <p class="sr-empty" data-empty="fix-rows" hidden>Nothing ranked for fixing.</p>
+      </article>
+
+      <article class="sr-card" id="watch">
+        <header class="sr-card-head">
+          <h2>Watch out for</h2>
+          <p>Dated store rules that affect this app, decisions still open, and what this run couldn't check.</p>
+        </header>
+        <div class="sr-tablebox is-short">
+          <table class="sr-table" data-source="watch" data-row-key="key">
+            <thead><tr><th data-field="date">When</th><th data-field="kind">Kind</th><th data-field="applies" class="sr-wide">Store</th><th data-field="topic">What</th><th data-field="note" class="sr-wide">Why it matters</th></tr></thead>
+            <tbody data-draw="watch-rows"></tbody>
+          </table>
+        </div>
+        <p class="sr-empty" data-empty="watch-rows" hidden>Nothing to watch.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="sr-view" id="checks" role="tabpanel" aria-label="All checks" hidden>
+    <div class="sr-filters">
+      <div class="sr-seg" role="group" aria-label="Store">
+        <button type="button" data-platform="all" aria-pressed="true">Both stores</button>
+        <button type="button" data-platform="ios" aria-pressed="false">App Store</button>
+        <button type="button" data-platform="android" aria-pressed="false">Google Play</button>
+      </div>
+      <div class="sr-seg" role="group" aria-label="Status">
+        <button type="button" data-show="open" aria-pressed="true">Open <span data-draw="c-open" data-source="summary" data-field="open">—</span></button>
+        <button type="button" data-show="confirm" aria-pressed="false">To confirm <span data-draw="c-confirm" data-source="summary" data-field="confirm">—</span></button>
+        <button type="button" data-show="pass" aria-pressed="false">Passing <span data-draw="c-passing" data-source="summary" data-field="passing">—</span></button>
+        <button type="button" data-show="all" aria-pressed="false">All <span data-draw="c-all" data-source="summary" data-field="all">—</span></button>
+      </div>
+      <button class="sr-picked" type="button" aria-label="Clear the stage filter" hidden>Stage:
+        <span data-stage-label="I1" hidden>TestFlight internal</span><span data-stage-label="I2" hidden>TestFlight external</span><span data-stage-label="I3" hidden>App Store</span><span data-stage-label="A1" hidden>Play internal testing</span><span data-stage-label="A2" hidden>Play closed testing</span><span data-stage-label="A3" hidden>Play open testing</span><span data-stage-label="A4" hidden>Play production</span> ×</button>
+      <input id="sr-search" class="sr-search" type="search" placeholder="Search checks, evidence, fixes" aria-label="Search checks">
+    </div>
+    <div class="sr-tablebox" id="checks-table">
+      <table class="sr-table" data-source="findings" data-row-key="key">
+        <thead><tr>
+          <th data-field="id" aria-sort="none"><button class="sr-sort" type="button" data-sort="id">Check</button></th>
+          <th data-field="status" aria-sort="none"><button class="sr-sort" type="button" data-sort="status">Status</button></th>
+          <th data-field="severity" aria-sort="ascending"><button class="sr-sort" type="button" data-sort="severity">Severity</button></th>
+          <th data-field="gate" aria-sort="none"><button class="sr-sort" type="button" data-sort="gate">Needed by</button></th>
+          <th data-field="title">Finding</th>
+          <th data-field="evidence" class="sr-wide">Evidence</th>
+          <th data-field="fix">Fix</th>
+        </tr></thead>
+        <tbody data-draw="check-rows"></tbody>
+      </table>
+    </div>
+    <p class="sr-empty" data-empty="check-rows" hidden>No checks match these filters.</p>
+    <p class="sr-foot">Status: FAIL confirmed in the code or config · LIKELY found by a heuristic, not yet confirmed on a build · RISK a reviewer may reject it · VERIFY can't be told from the repository · PASS met. Needed by: I1 TestFlight internal, I2 TestFlight external, I3 App Store, A1 Play internal, A2 closed, A3 open, A4 production.</p>
+  </section>
+
+  <section class="sr-view" id="tasks" role="tabpanel" aria-label="Store console tasks" hidden>
+    <div class="sr-filters">
+      <div class="sr-seg" role="group" aria-label="Store">
+        <button type="button" data-platform="all" aria-pressed="true">Both stores</button>
+        <button type="button" data-platform="ios" aria-pressed="false">App Store</button>
+        <button type="button" data-platform="android" aria-pressed="false">Google Play</button>
+      </div>
+    </div>
+    <div class="sr-tablebox" id="tasks-table">
+      <table class="sr-table" data-source="console" data-row-key="key">
+        <thead><tr><th data-field="platform">Store</th><th data-field="stage_name">Stage</th><th data-field="task">Task</th><th data-field="state">State</th></tr></thead>
+        <tbody data-draw="task-rows"></tbody>
+      </table>
+    </div>
+    <p class="sr-empty" data-empty="task-rows" hidden>No console tasks for this store.</p>
+    <p class="sr-foot">Work done in App Store Connect and Play Console that the code can't show. Ticked only when the team confirmed it.</p>
+  </section>
+
+  <p class="sr-foot">Full report in the repository: <span data-draw="m-report" data-source="run" data-field="report">—</span>. Made with the rn-store-readiness plugin; run /rn-store-readiness again to refresh this page.</p>
+</div>
+
+<script>
+  const STAGES = { I1: ['iOS', 1], I2: ['iOS', 2], I3: ['iOS', 3], A1: ['Android', 1], A2: ['Android', 2], A3: ['Android', 3], A4: ['Android', 4] };
+  const SEVERITY = { blocker: 0, high: 1, medium: 2, low: 3 };
+  const STATUS = { FAIL: 0, LIKELY: 1, RISK: 2, VERIFY: 3, PASS: 4, 'N/A': 5 };
+  const SHOW = { open: ['FAIL', 'LIKELY', 'RISK'], confirm: ['VERIFY'], pass: ['PASS', 'N/A'] };
+  const VIEWS = ['overview', 'checks', 'tasks'];
+  const sort = { key: 'severity', dir: 1 };
+
+  dash.calc('summary', {
+    inputs: ['stages', 'findings'],
+    title: 'Readiness totals',
+    description: 'Stages per verdict, and checks per status group (open = FAIL, LIKELY or RISK).',
+    fn: (stages, findings) => {
+      const open = findings.filter((f) => ['FAIL', 'LIKELY', 'RISK'].includes(f.status));
+      return [{
+        stages_total: stages.length,
+        stages_blocked: stages.filter((s) => s.verdict === 'BLOCKED').length,
+        stages_risk: stages.filter((s) => s.verdict === 'AT RISK').length,
+        stages_ready: stages.filter((s) => s.verdict === 'READY').length,
+        blockers: open.filter((f) => f.severity === 'blocker' && f.status !== 'RISK').length,
+        high: open.filter((f) => f.severity === 'high' || (f.severity === 'blocker' && f.status === 'RISK')).length,
+        open: open.length,
+        confirm: findings.filter((f) => f.status === 'VERIFY').length,
+        passing: findings.filter((f) => f.status === 'PASS' || f.status === 'N/A').length,
+        all: findings.length,
+      }];
+    },
+  });
+
+  dash.calc('next_fix', {
+    inputs: ['findings'],
+    title: 'First fix',
+    description: 'The check ranked first in the fix order.',
+    fn: (findings) => findings
+      .filter((f) => Number(f.order) > 0)
+      .sort((a, b) => Number(a.order) - Number(b.order))
+      .slice(0, 1)
+      .map((f) => ({ id: f.id, title: f.title })),
+  });
+
+  dash.calc('fix_order', {
+    inputs: ['findings'],
+    title: 'Fix order',
+    description: 'Checks the evaluation ranked for fixing, earliest blocked stage first.',
+    fn: (findings) => findings
+      .filter((f) => Number(f.order) > 0)
+      .sort((a, b) => Number(a.order) - Number(b.order))
+      .map((f) => ({ key: f.key, order: Number(f.order), id: f.id, title: f.title, gate: f.gate, effort: f.effort })),
+  });
+
+  const rowsOf = (id) => {
+    const d = dash.data(id);
+    return d.status === 'ok' && Array.isArray(d.data) ? d.data : null;
+  };
+  const str = (v) => (v === null || v === undefined ? '' : String(v));
+  const tone = (v) => ({ BLOCKED: 'bad', FAIL: 'bad', LIKELY: 'bad', blocker: 'bad', 'AT RISK': 'warn', RISK: 'warn', high: 'warn', READY: 'ok', PASS: 'ok', Done: 'ok', Escalation: 'warn' })[v] ?? '';
+  const cell = (value, cls) => {
+    const td = document.createElement('td');
+    if (cls) td.className = cls;
+    td.textContent = str(value);
+    return td;
+  };
+  const pillCell = (value, cls) => {
+    const td = document.createElement('td');
+    if (cls) td.className = cls;
+    if (str(value)) {
+      const pill = document.createElement('span');
+      pill.className = 'sr-pill';
+      pill.dataset.tone = tone(value);
+      pill.textContent = str(value);
+      td.append(pill);
+    }
+    return td;
+  };
+  const setEmpty = (name, empty) => document.querySelectorAll(`[data-empty="${name}"]`).forEach((p) => { p.hidden = !empty; });
+  const platformOk = (rowPlatform, wanted) => !wanted || wanted === 'all' || rowPlatform === 'Both' || rowPlatform.toLowerCase() === wanted;
+  const stageOk = (row, stage) => {
+    if (!stage || !STAGES[stage]) return true;
+    const [platform, rank] = STAGES[stage];
+    if (row.platform !== 'Both' && row.platform !== platform) return false;
+    const gate = platform === 'iOS' ? row.gate_ios : row.gate_android;
+    return Boolean(gate) && Number(String(gate).slice(1)) <= rank;
+  };
+
+  function openView(name) {
+    const view = VIEWS.includes(name) ? name : 'overview';
+    document.querySelectorAll('.sr-view').forEach((s) => { s.hidden = s.id !== view; });
+    document.querySelectorAll('.sr-tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === view)));
+    dash.setLink(view);
+  }
+  document.querySelectorAll('.sr-tab').forEach((b) => b.addEventListener('click', () => openView(b.dataset.tab)));
+  document.querySelectorAll('[data-platform]').forEach((b) => b.addEventListener('click', () => dash.setParams({ platform: b.dataset.platform, stage: null })));
+  document.querySelectorAll('[data-show]').forEach((b) => b.addEventListener('click', () => dash.setParams({ show: b.dataset.show })));
+  document.querySelectorAll('.sr-picked').forEach((b) => b.addEventListener('click', () => dash.setParams({ stage: null })));
+  document.querySelectorAll('.sr-search').forEach((input) => input.addEventListener('input', () => dash.draw('check-rows')));
+  document.querySelectorAll('.sr-sort').forEach((b) => b.addEventListener('click', () => {
+    const key = b.dataset.sort;
+    sort.dir = sort.key === key ? -sort.dir : 1;
+    sort.key = key;
+    document.querySelectorAll('th[aria-sort]').forEach((th) => th.setAttribute('aria-sort', 'none'));
+    b.closest('th')?.setAttribute('aria-sort', sort.dir === 1 ? 'ascending' : 'descending');
+    dash.draw('check-rows');
+  }));
+  const showCheck = (id) => {
+    document.querySelectorAll('.sr-search').forEach((input) => { input.value = id; });
+    dash.setParams({ show: 'all', platform: 'all', stage: null });
+    openView('checks');
+    dash.draw('check-rows');
+  };
+
+  dash.onData(() => {
+    const p = dash.params();
+    document.querySelectorAll('[data-platform]').forEach((b) => b.setAttribute('aria-pressed', String((p.platform ?? 'all') === b.dataset.platform)));
+    document.querySelectorAll('[data-show]').forEach((b) => b.setAttribute('aria-pressed', String((p.show ?? 'open') === b.dataset.show)));
+    const stage = p.stage && STAGES[p.stage] ? p.stage : null;
+    document.querySelectorAll('.sr-picked').forEach((b) => { b.hidden = !stage; });
+    document.querySelectorAll('[data-stage-label]').forEach((s) => { s.hidden = s.dataset.stageLabel !== stage; });
+    const sum = rowsOf('summary')?.[0];
+    const say = !sum ? 'blocked' : Number(sum.stages_blocked) > 0 ? 'blocked' : Number(sum.stages_risk) > 0 ? 'risk' : 'ready';
+    document.querySelectorAll('[data-say]').forEach((el) => { el.hidden = el.dataset.say !== say; });
+    document.querySelectorAll('.sr-tile[data-alert]').forEach((t) => t.classList.toggle('is-alert', Boolean(sum) && Number(sum[t.dataset.alert]) > 0));
+  });
+
+  ['project', 'say-blocked', 'say-total', 'say-risk', 'say-next-id', 'say-next-title', 'm-evaluated', 'm-commit', 'm-policies', 'm-stack', 'm-scope', 'm-report',
+    't-ready', 't-total', 't-blockers', 't-high', 't-confirm', 't-passing', 'c-open', 'c-confirm', 'c-passing', 'c-all'].forEach((name) => {
+    dash.draw(name, (el) => {
+      const row = rowsOf(el.dataset.source)?.[0];
+      el.textContent = row && row[el.dataset.field] !== undefined && row[el.dataset.field] !== null ? str(row[el.dataset.field]) : '—';
+    });
+  });
+
+  const drawSteps = (platform) => (el) => {
+    const stages = rowsOf('stages');
+    el.replaceChildren();
+    el.classList.toggle('dash-skeleton', !stages && dash.data('stages').status === 'loading');
+    if (!stages) return;
+    stages.filter((s) => s.platform === platform).sort((a, b) => Number(a.order) - Number(b.order)).forEach((s) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'sr-step';
+      button.setAttribute('aria-label', `${s.name}: ${s.verdict}. Show its checks.`);
+      const top = document.createElement('span');
+      top.className = 'sr-step-top';
+      const code = document.createElement('span');
+      code.className = 'sr-step-code';
+      code.textContent = s.stage;
+      const pill = document.createElement('span');
+      pill.className = 'sr-pill';
+      pill.dataset.tone = tone(s.verdict);
+      pill.textContent = s.verdict;
+      top.append(code, pill);
+      const name = document.createElement('span');
+      name.className = 'sr-step-name';
+      name.textContent = s.name;
+      const counts = document.createElement('span');
+      counts.className = 'sr-step-counts';
+      counts.textContent = `Blockers ${s.blockers} · High ${s.high} · To confirm ${s.unconfirmed}`;
+      button.append(top, name, counts);
+      const ids = str(s.blocking) || str(s.risks);
+      if (ids) {
+        const list = document.createElement('span');
+        list.className = 'sr-step-ids';
+        list.textContent = ids;
+        button.append(list);
+      }
+      if (str(s.next_step)) {
+        const next = document.createElement('span');
+        next.className = 'sr-step-next';
+        next.textContent = s.next_step;
+        button.append(next);
+      }
+      button.addEventListener('click', () => {
+        dash.setParams({ stage: s.stage, platform: platform.toLowerCase(), show: 'open' });
+        document.querySelectorAll('.sr-search').forEach((input) => { input.value = ''; });
+        openView('checks');
+      });
+      el.append(button);
+    });
+  };
+  dash.draw('steps-ios', drawSteps('iOS'));
+  dash.draw('steps-android', drawSteps('Android'));
+
+  dash.draw('fix-rows', (tbody) => {
+    const rows = rowsOf('fix_order');
+    tbody.replaceChildren();
+    setEmpty('fix-rows', Boolean(rows) && rows.length === 0);
+    for (const r of rows ?? []) {
+      const tr = document.createElement('tr');
+      tr.dataset.key = r.key;
+      const idCell = document.createElement('td');
+      idCell.className = 'sr-id';
+      const link = document.createElement('button');
+      link.type = 'button';
+      link.className = 'sr-link';
+      link.textContent = str(r.id);
+      link.addEventListener('click', () => showCheck(str(r.id)));
+      idCell.append(link);
+      tr.append(cell(r.order, 'sr-num'), idCell, cell(r.title, 'sr-text'), cell(r.gate, 'sr-num'), cell(r.effort, 'sr-num'));
+      tbody.append(tr);
+    }
+  });
+
+  dash.draw('watch-rows', (tbody) => {
+    const rows = rowsOf('watch');
+    tbody.replaceChildren();
+    setEmpty('watch-rows', Boolean(rows) && rows.length === 0);
+    for (const r of rows ?? []) {
+      const tr = document.createElement('tr');
+      tr.dataset.key = r.key;
+      const what = document.createElement('td');
+      what.className = 'sr-text';
+      if (/^https:\/\//.test(str(r.source))) {
+        const a = document.createElement('a');
+        a.href = str(r.source);
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = str(r.topic);
+        what.append(a);
+      } else what.textContent = str(r.topic);
+      tr.append(cell(r.date, 'sr-num'), pillCell(r.kind), cell(r.applies, 'sr-wide'), what, cell(r.note, 'sr-wide sr-muted'));
+      tbody.append(tr);
+    }
+  });
+
+  const compare = (a, b) => {
+    const rank = {
+      severity: (r) => SEVERITY[r.severity] ?? 9,
+      status: (r) => STATUS[r.status] ?? 9,
+      gate: (r) => str(r.gate),
+      id: (r) => str(r.key),
+    }[sort.key];
+    const x = rank(a);
+    const y = rank(b);
+    const primary = x < y ? -1 : x > y ? 1 : 0;
+    if (primary) return primary * sort.dir;
+    return (STATUS[a.status] ?? 9) - (STATUS[b.status] ?? 9) || str(a.key).localeCompare(str(b.key));
+  };
+
+  dash.draw('check-rows', (tbody) => {
+    const all = rowsOf('findings');
+    tbody.replaceChildren();
+    if (!all) {
+      setEmpty('check-rows', false);
+      return;
+    }
+    const p = dash.params();
+    const statuses = SHOW[p.show ?? 'open'];
+    const query = str(document.querySelector('.sr-search')?.value).trim().toLowerCase();
+    const list = all
+      .filter((r) => platformOk(str(r.platform), p.platform) && stageOk(r, p.stage) && (!statuses || statuses.includes(r.status)))
+      .filter((r) => !query || [r.id, r.area, r.title, r.evidence, r.fix].some((v) => str(v).toLowerCase().includes(query)))
+      .sort(compare);
+    for (const r of list) {
+      const tr = document.createElement('tr');
+      tr.dataset.key = r.key;
+      tr.append(cell(r.id, 'sr-id'), pillCell(r.status), pillCell(r.severity), cell(r.gate, 'sr-num'), cell(r.title, 'sr-text'), cell(r.evidence, 'sr-wide sr-muted sr-text'), cell(r.fix, 'sr-text'));
+      tbody.append(tr);
+    }
+    setEmpty('check-rows', list.length === 0);
+  });
+
+  dash.draw('task-rows', (tbody) => {
+    const all = rowsOf('console');
+    tbody.replaceChildren();
+    if (!all) {
+      setEmpty('task-rows', false);
+      return;
+    }
+    const p = dash.params();
+    const list = all
+      .filter((r) => platformOk(str(r.platform), p.platform))
+      .sort((a, b) => str(a.platform).localeCompare(str(b.platform)) || Number(a.rank) - Number(b.rank) || str(a.key).localeCompare(str(b.key), undefined, { numeric: true }));
+    for (const r of list) {
+      const tr = document.createElement('tr');
+      tr.dataset.key = r.key;
+      tr.append(cell(r.platform, 'sr-num'), cell(r.stage_name, 'sr-num'), cell(r.task, 'sr-text'), pillCell(r.state));
+      tbody.append(tr);
+    }
+    setEmpty('task-rows', list.length === 0);
+  });
+
+  const named = location.hash.slice(1);
+  if (VIEWS.includes(named)) openView(named);
+</script>
