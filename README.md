@@ -169,6 +169,23 @@ Agents: `product-repo-analyst`, `product-history-analyst`, `product-ticket-analy
 
 Needs: Node ≥18 (bundled `dep-graph.mjs` + `session-digest.mjs`, zero dependencies, both `--selftest`-able). No network, no MCP required. Optional: a **Jira/Confluence reader MCP** (detected by tool description, not name) adds ticket import — absent, bootstrap says so once and continues. Reads past sessions from `~/.claude/projects/`. Never edits code, never auto-commits, never creates tickets — ticket creation is `idea-to-ticket`'s job.
 
+### rn-store-readiness
+
+Pre-submission audit for **React Native / Expo** apps. Answers "what blocks us from TestFlight / closed testing / production?" **per stage**: iOS TestFlight internal (I1) → TestFlight external, Beta App Review (I2) → App Store (I3); Play internal (A1) → closed (A2) → open (A3) → production (A4). Stages cumulative per platform. Each gets **BLOCKED / AT RISK / READY**, computed by bundled script from the checks — not eyeballed.
+
+**Read-only on the app.** Zero-dependency scanner reads app config (`expo config` or bare native projects), EAS profiles, identifiers, build numbers, targetSdk, Xcode toolchain, permissions + purpose strings, privacy manifests, 16 KB native-library risk, copyleft licenses, tracked secrets, plus account-deletion / privacy-policy / AI-consent / IAP code signals. Evaluation confirms every scanner hit against code (file:line evidence), runs project health (typecheck, lint, tests, `expo-doctor`), and applies gated catalog of 60 checks against current Apple + Google Play policy — dated table, re-verified against official sources once older than 90 days. Console-only items (App Privacy, Data safety, demo account…) stay `VERIFY` until someone confirms them.
+
+Output: readiness report in app repo (`docs/store-readiness.md` or `STORE-READINESS.md`) — verdict per stage, blockers in fix order, findings with evidence, store-console checklist — plus shareable **claude.ai dashboard** of what's missing and what to watch, refreshed in place every run. Pair with `mobile-scaffold`: scaffold builds the app, this checks it can ship.
+
+```
+/plugin install rn-store-readiness@999online
+/rn-store-readiness [app directory] [release .aab/.apk]
+```
+
+Skills (also standalone): `rn-store-scan` (scanner only — quick preliminary findings), `rn-store-evaluate` (confirm findings, health, verdicts, report), `rn-store-dashboard` (publish / refresh dashboard from `readiness.json`), `android-16kb-check` (Play 16 KB page-size check on any `.aab` / `.apk` / `.aar` / `.so`).
+
+Needs: Node ≥18 (bundled `scan.mjs`, `build-dashboard-data.mjs`, `check-elf-alignment.mjs`, zero dependencies). App's `node_modules` for full scan — asks before installing, scans anyway without. Optional: network (`expo-doctor`, policy re-verification), `bundletool` (final merged manifest), claude.ai **Artifact** tool for dashboard — absent, dashboard skipped, Markdown report still written. Scan data stays out of app repo (session scratchpad, else plugin data dir). No MCP. Never changes app code; offers fixes after.
+
 ## Layout
 
 ```

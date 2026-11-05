@@ -3,7 +3,7 @@
   "owner": { "name": "999online" },
   "metadata": {
     "description": "Claude Code plugin marketplace for 999online developers.",
-    "version": "0.1.6"
+    "version": "0.1.7"
   },
   "plugins": [
     {
@@ -40,6 +40,12 @@
       "name": "product-wiki",
       "source": "./plugins/product-wiki/",
       "description": "Act as project manager / product owner over a markdown product wiki — never touches code. Stakeholders describe features in plain language; the plugin interrogates them into real acceptance criteria, files a feature page, maps dependencies across features and systems (with deterministic topological order and cycle detection), sequences delivery into roadmap waves, recommends improvements and cuts a good PO would push for, lints the wiki for contradictions and stale claims, answers questions with page citations, and writes stakeholder status reports. Bootstraps an existing project by fanning out three analysts over the repository, past Claude Code session transcripts, and (when a Jira/Confluence reader MCP is connected) existing tickets. The wiki lives in its own directory outside the code repo, Obsidian-ready, and is the only thing the plugin ever writes. Use to run product management on a codebase; not for writing or changing code, and not for creating Jira tickets (that is idea-to-ticket).",
+      "version": "0.1.0"
+    },
+    {
+      "name": "rn-store-readiness",
+      "source": "./plugins/rn-store-readiness/",
+      "description": "Evaluate how ready a React Native or Expo app is for App Store and Google Play submission, stage by stage — TestFlight internal, TestFlight external (Beta App Review), App Store, and Play internal, closed, open and production tracks. A zero-dependency read-only scanner reads app config, EAS profiles, native projects, permissions and purpose strings, privacy manifests, 16 KB native-library alignment, copyleft licenses, secrets and account-deletion / privacy-policy / AI-consent signals; the evaluation confirms each finding with file:line evidence against a gated catalog of 60 current store-policy checks (dated, re-verified when stale) and writes a readiness report with a verdict per stage, blockers in fix order and the store-console tasks left — plus a shareable claude.ai dashboard refreshed on every run. Standalone skills: quick scan, evaluate, dashboard, and a 16 KB alignment check for any AAB/APK. Never changes app code. Use before a first TestFlight or Play upload, or to answer what blocks the next stage.",
       "version": "0.1.0"
     }
   ]
